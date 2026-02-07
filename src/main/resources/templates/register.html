@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Fitness Tracker</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏋️ Fitness Tracker</h1>
+        </header>
+
+        <main class="auth-content">
+            <div class="auth-form">
+                <h2>Register</h2>
+                <div id="message"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fitnessLevel">Fitness Level:</label>
+                        <select id="fitnessLevel" name="fitnessLevel" required>
+                            <option value="">Select your level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="age" min="13" max="120">
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" step="0.1" min="20" max="300">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height (cm):</label>
+                        <input type="number" id="height" name="height" step="0.1" min="100" max="250">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+                <p class="auth-link">Already have an account? <a href="/login">Login here</a></p>
+                <p class="auth-link"><a href="/">Back to Home</a></p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 UNT Fitness Tracker</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                fitnessLevel: document.getElementById('fitnessLevel').value,
+                age: parseInt(document.getElementById('age').value) || null,
+                weight: parseFloat(document.getElementById('weight').value) || null,
+                height: parseFloat(document.getElementById('height').value) || null
+            };
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                const messageDiv = document.getElementById('message');
+
+                if (result.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Registration successful! Redirecting to login...';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = result.message;
+                }
+            } catch (error) {
+                document.getElementById('message').className = 'message error';
+                document.getElementById('message').textContent = 'Registration failed. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
