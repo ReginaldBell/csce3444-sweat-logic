@@ -79,7 +79,7 @@ Project structure will be finalized during the system design phase.
 
 ## Documentation
 
-- [Software Requirements Specification (SRS)](docs/SRS_Group_13_Modified.docx) – Complete system requirements
+- [Software Requirements Specification (SRS)](docs/SRS_Group_13_Modified.docx) – Complete system requirements *(Click to download)*
 
 ## Known Limitations
 
