@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress - SweatLogic</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>SweatLogic</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="workout.html">Workout</a>
+            <a href="progress.html">Progress</a>
+            <a href="map.html">Map</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Progress</h2>
+        <section id="progress-charts">
+            <div class="card">
+                <h3>Workouts Over Time</h3>
+                <canvas id="workouts-chart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Duration Over Time</h3>
+                <canvas id="duration-chart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/progress.js"></script>
+</body>
+</html>
