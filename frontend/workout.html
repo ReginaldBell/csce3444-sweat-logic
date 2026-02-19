@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout - SweatLogic</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>SweatLogic</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="workout.html">Workout</a>
+            <a href="progress.html">Progress</a>
+            <a href="map.html">Map</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Log Workout</h2>
+        <form id="workout-form">
+            <label for="workout-type">Type</label>
+            <select id="workout-type" name="type">
+                <option value="running">Running</option>
+                <option value="cycling">Cycling</option>
+                <option value="weights">Weights</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="duration">Duration (min)</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="4"></textarea>
+
+            <button type="submit" class="btn">Save Workout</button>
+        </form>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/workout.js"></script>
+</body>
+</html>
