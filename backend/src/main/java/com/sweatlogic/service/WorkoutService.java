@@ -63,8 +63,11 @@ public class WorkoutService {
         }).orElseThrow(() -> new RuntimeException("Workout not found: " + id));
     }
 
-    // Delete a workout by its ID
+    // Delete a workout by its ID — throws if not found
     public void deleteWorkout(Long id) {
+        if (!workoutRepository.existsById(id)) {
+            throw new RuntimeException("Workout not found: " + id);
+        }
         workoutRepository.deleteById(id);
     }
 }

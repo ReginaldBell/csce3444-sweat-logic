@@ -59,10 +59,14 @@ public class WorkoutController {
         }
     }
 
-    // Delete a workout — returns 204 (no content) on success
+    // Delete a workout — returns 204 (no content) on success, 404 if not found
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable Long id) {
-        workoutService.deleteWorkout(id);
-        return ResponseEntity.noContent().build();
+        try {
+            workoutService.deleteWorkout(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

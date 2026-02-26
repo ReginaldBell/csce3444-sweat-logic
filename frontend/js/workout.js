@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: form.type.value,
             duration: parseInt(form.duration.value, 10),
             notes: form.notes.value,
-            date: new Date().toISOString(),
+            date: new Date().toISOString().slice(0, -1),
         };
 
         try {

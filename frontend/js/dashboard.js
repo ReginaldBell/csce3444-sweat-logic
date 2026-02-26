@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             list.appendChild(li);
         });
 
-        document.getElementById('total-workouts').textContent = workouts.length;
-        const totalDuration = workouts.reduce((sum, w) => sum + w.duration, 0);
+        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const weeklyWorkouts = workouts.filter(w => new Date(w.date) >= oneWeekAgo);
+        document.getElementById('total-workouts').textContent = weeklyWorkouts.length;
+        const totalDuration = weeklyWorkouts.reduce((sum, w) => sum + w.duration, 0);
         document.getElementById('total-duration').textContent = totalDuration;
     } catch (err) {
         console.error('Failed to load dashboard data:', err);
