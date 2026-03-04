@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SweatLogic</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>SweatLogic</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="workout.html">Workout</a>
+            <a href="progress.html">Progress</a>
+            <a href="map.html">Map</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Dashboard</h2>
+        <section id="summary">
+            <div class="card" id="recent-workouts">
+                <h3>Recent Workouts</h3>
+                <ul id="workout-list"></ul>
+            </div>
+            <div class="card" id="weekly-stats">
+                <h3>This Week</h3>
+                <p>Total workouts: <span id="total-workouts">0</span></p>
+                <p>Total duration: <span id="total-duration">0</span> min</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
