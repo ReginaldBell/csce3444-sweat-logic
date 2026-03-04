@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout - SweatLogic</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>SweatLogic</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="workout.html">Workout</a>
+            <a href="progress.html">Progress</a>
+            <a href="map.html">Map</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Generate Workout</h2>
+
+        <!-- Step 1: Configuration -->
+        <div class="card" id="config-card">
+
+            <div class="selector-group">
+                <p class="selector-label">Goal</p>
+                <div class="btn-group" id="goal-group">
+                    <button class="toggle-btn active" data-value="strength">Strength</button>
+                    <button class="toggle-btn"        data-value="cardio">Cardio</button>
+                    <button class="toggle-btn"        data-value="endurance">Endurance</button>
+                </div>
+            </div>
+
+            <div class="selector-group">
+                <p class="selector-label">Experience Level</p>
+                <div class="btn-group" id="level-group">
+                    <button class="toggle-btn"        data-value="beginner">Beginner</button>
+                    <button class="toggle-btn active" data-value="intermediate">Intermediate</button>
+                    <button class="toggle-btn"        data-value="advanced">Advanced</button>
+                </div>
+            </div>
+
+            <div class="selector-group">
+                <p class="selector-label">Target Body Part</p>
+                <div class="btn-group" id="bodypart-group">
+                    <button class="toggle-btn" data-value="chest">Chest</button>
+                    <button class="toggle-btn" data-value="back">Back</button>
+                    <button class="toggle-btn" data-value="legs">Legs</button>
+                    <button class="toggle-btn" data-value="arms">Arms</button>
+                    <button class="toggle-btn" data-value="core">Core</button>
+                </div>
+            </div>
+
+            <button class="btn" id="generate-btn" disabled>Select a Body Part to Generate</button>
+            <p id="config-error" class="error-msg"></p>
+        </div>
+
+        <!-- Step 2: Workout Plan (hidden until generated) -->
+        <section id="plan-section" class="hidden">
+
+            <div class="plan-header">
+                <div>
+                    <h3 id="plan-title"></h3>
+                    <p id="plan-subtitle" class="plan-meta"></p>
+                </div>
+                <button class="btn btn-outline" id="regenerate-btn">Regenerate</button>
+            </div>
+
+            <!-- Exercise cards injected here by workout.js -->
+            <div id="exercise-list"></div>
+
+            <!-- Complete session -->
+            <div class="card complete-card">
+                <p class="selector-label">Duration (minutes)</p>
+                <input type="number" id="duration-input" min="1" max="300" placeholder="e.g. 45">
+                <button class="btn btn-complete" id="complete-btn">Complete Workout</button>
+                <p id="complete-msg" class="complete-msg"></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+    <script src="js/workout.js"></script>
+</body>
+</html>
