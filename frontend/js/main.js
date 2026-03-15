@@ -53,11 +53,26 @@ function calculateBMI() {
     if (weight > 0 && height > 0) {
         const bmi = (weight / (height * height)).toFixed(1);
         let category = "";
+        // included recommendation for workout
+        let recommendation = "";
+        const userGoal = document.getElementById('goal').value;
 
         if (bmi < 18.5) category = "Underweight";
         else if (bmi < 24.9) category = "Normal weight";
         else if (bmi < 29.9) category = "Overweight";
         else category = "Obese";
+
+        // recommendation based on bmi
+        if (userGoal === "Lose weight") {
+            recommendation = "Focus on high-intensity exercises to burn calories, specifically cardio.";
+        } else if (userGoal === "Gain muscle") {
+            recommendation = "Focus on heavy compound lifts (squats, deadlifts, bench press) with minimum weight and maximum weight.";
+        } else if (userGoal === "Improve endurance") {
+            recommendation = "Focus on cardio exercises and high reps on lifts with minimum weight.";
+        } else if (userGoal == "Maintain"){
+            recommendation = "2 days of light cardio with about 2-3 days of lift days";
+        }
+        document.getElementById('workout-recommendation').innerText = `Recommendation: ${recommendation}`;
 
         let color = "#d65a6d"; // default color for under/over
         if (category === "Normal weight") {
@@ -83,6 +98,63 @@ function calculateBMI() {
         alert("Please enter a valid height and weight!");
     }
 }
+
+function recommendedWorkouts() {
+    const goalRecommendation = document.getElementById('goal-recommendation');
+    const specificRecommendation = document.getElementById('specific-recommendation');
+    
+    if (goalRecommendation) {
+        const goalPlans = [
+            { goal: "Lose weight", link: "lose-weight.html" },
+            { goal: "Maintain", link: "maintain.html" },
+            { goal: "Gain muscle", link: "gain-muscle.html" },
+            { goal: "Improve endurance", link: "endurance.html" }
+        ];
+
+        goalRecommendation.innerHTML = goalPlans.map(plan => `
+            <a href="${plan.link}" style="
+                display: inline-block;
+                width: 150px;
+                padding: 30px 15px;
+                margin: 5px;
+                border: 2px solid #d65a6d;
+                border-radius: 10px;
+                text-align: center;
+                text-decoration: none;
+                color: black;
+            ">
+                <h3 style="margin: 0; font-size: 1.1em;">${plan.goal}</h3>
+            </a>
+        `).join('');
+    }
+
+    if (specificRecommendation) {
+        const bodyParts = [
+            { part: "Chest", link: "chest.html" },
+            { part: "Back", link: "back.html" },
+            { part: "Legs", link: "legs.html" },
+            { part: "Shoulders", link: "shoulders.html" },
+            { part: "Arms", link: "arms.html" }
+        ];
+
+        specificRecommendation.innerHTML = bodyParts.map(item => `
+            <a href="${item.link}" style="
+                display: inline-block;
+                width: 150px;
+                padding: 30px 15px;
+                margin: 5px;
+                border: 2px solid #d65a6d;
+                border-radius: 10px;
+                text-align: center;
+                text-decoration: none;
+                color: black;
+            ">
+                <h4 style="margin: 0; font-size: 1.1em;">${item.part}</h4>
+            </a>
+        `).join('');
+    }
+}
+window.addEventListener('load', recommendedWorkouts);
 
 //function to clear profile information from local storage
 function clearProfile() {
