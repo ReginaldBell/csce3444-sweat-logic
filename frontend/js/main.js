@@ -117,7 +117,7 @@ function recommendedWorkouts() {
                 width: 150px;
                 padding: 30px 15px;
                 margin: 5px;
-                border: 2px solid #d65a6d;
+                border: 2px solid #1b1b1b;
                 border-radius: 10px;
                 text-align: center;
                 text-decoration: none;
@@ -143,7 +143,7 @@ function recommendedWorkouts() {
                 width: 150px;
                 padding: 30px 15px;
                 margin: 5px;
-                border: 2px solid #d65a6d;
+                border: 2px solid #1b1b1b;
                 border-radius: 10px;
                 text-align: center;
                 text-decoration: none;

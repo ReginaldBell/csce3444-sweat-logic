@@ -137,17 +137,27 @@ form .btn {
 
 /* Map */
 #map-container {
-    height: 480px;
+    position: relative;
+    height: 700px;
     background: #ddd;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
 }
 
 #map {
     width: 100%;
     height: 100%;
     border-radius: 6px;
+}
+
+#map-center-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width:800px;
+    height: auto;
+    z-index: 10;
+    pointer-events: none;
 }
 
