@@ -5,17 +5,36 @@ const motionGroups = [
     {
         selector: '.hero, .page-intro, .cta-band',
         animation: 'hero',
+        step: 140,
     },
     {
-        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .settings-info-panel, .preview-card, .split-copy, form, .card',
+        selector: '.hero .eyebrow, .hero h2, .hero p, .hero-actions, .hero-metrics',
+        animation: 'hero-slice',
+        step: 120,
+    },
+    {
+        selector: '.feature-grid .feature-card:nth-child(odd), .progress-grid .chart-panel:first-child, .settings-layout form, .logic-stack .logic-row',
+        animation: 'slide-left',
+        step: 100,
+    },
+    {
+        selector: '.feature-grid .feature-card:nth-child(even), .progress-grid .chart-panel:last-child, .settings-info-panel',
+        animation: 'dash-in',
+        step: 100,
+    },
+    {
+        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .preview-card, .split-copy, form, .card',
         animation: 'pop',
+        step: 90,
     },
     {
         selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip',
         animation: 'slide-right',
+        step: 80,
     },
 ];
 const countSelector = '.stat-value, #weekly-sessions-count, #weekly-time-total, #progress-total-workouts, #progress-total-hours, #progress-avg-session, .mini-metric strong, .detail-chip strong';
+const progressSelector = '.metric-tile[data-progress], .stat-card[data-progress]';
 
 const countState = new WeakMap();
 let motionObserver;
@@ -80,7 +99,11 @@ function prepareAnimatedElements(root = document) {
 
             element.dataset.motionReady = 'true';
             element.setAttribute('data-animate', group.animation);
-            element.style.setProperty('--stagger-delay', `${(index % 6) * 85}ms`);
+            const scope = element.closest('.hero, .feature-grid, .split-panel, .stat-row, .dash-grid, .progress-grid, .settings-layout, .map-below, .quick-actions, .mini-metric-grid, .detail-grid') || element.parentElement || root;
+            const scopedItems = Array.from(scope.querySelectorAll(group.selector));
+            const scopedIndex = scopedItems.indexOf(element) >= 0 ? scopedItems.indexOf(element) : index;
+            const step = group.step || 85;
+            element.style.setProperty('--stagger-delay', `${(scopedIndex % 6) * step}ms`);
             motionObserver.observe(element);
         });
     });
@@ -179,6 +202,7 @@ function revealCountTargets(root) {
         target.dataset.countVisible = 'true';
         animateCount(target);
     });
+    revealProgressTargets(root);
 }
 
 function refreshCountTargets(root = document) {
@@ -201,6 +225,7 @@ function queueMotionRefresh() {
         prepareAnimatedElements(document);
         setupCountTargets(document);
         refreshCountTargets(document);
+        refreshProgressTargets(document);
     });
 }
 
@@ -210,6 +235,44 @@ function initializeMotion() {
     prepareAnimatedElements(document);
     setupCountTargets(document);
     refreshCountTargets(document);
+    refreshProgressTargets(document);
+}
+
+function clampProgress(value) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) {
+        return 0;
+    }
+
+    return Math.max(0, Math.min(1, numeric));
+}
+
+function setMeterScale(element, progress) {
+    element.style.setProperty('--meter-scale', clampProgress(progress).toFixed(3));
+}
+
+function revealProgressTargets(root = document) {
+    findMatches(root, progressSelector).forEach((element) => {
+        const progress = element.dataset.progress;
+        if (!progress) {
+            return;
+        }
+
+        setMeterScale(element, progress);
+    });
+}
+
+function refreshProgressTargets(root = document) {
+    findMatches(root, progressSelector).forEach((element) => {
+        if (!isInViewport(element)) {
+            return;
+        }
+
+        const progress = element.dataset.progress;
+        if (progress) {
+            setMeterScale(element, progress);
+        }
+    });
 }
 
 // asks user for weight when first click get started
@@ -246,5 +309,13 @@ function calculateBMI() {
 
 document.addEventListener('DOMContentLoaded', () => {
     window.refreshMotion = queueMotionRefresh;
+    window.setMotionProgress = (element, progress) => {
+        if (!element) {
+            return;
+        }
+
+        element.dataset.progress = clampProgress(progress).toFixed(3);
+        setMeterScale(element, progress);
+    };
     initializeMotion();
 });

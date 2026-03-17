@@ -28,7 +28,12 @@
         </header>
 
         <main class="page-shell">
-            <section class="hero hero-centered">
+            <section class="hero hero-centered hero-sport">
+                <div class="hero-energy" aria-hidden="true">
+                    <span class="hero-orb hero-orb-one"></span>
+                    <span class="hero-orb hero-orb-two"></span>
+                    <span class="hero-orb hero-orb-three"></span>
+                </div>
                 <div class="eyebrow">Built for UNT students</div>
                 <h2>Your Fitness Journey <span class="gradient-text">Starts Here</span></h2>
                 <p>Track workouts, get personalized recommendations, and navigate the UNT Rec Center with a cleaner, more polished static frontend built on your existing project logic.</p>
@@ -37,49 +42,72 @@
                     <a href="dashboard.html" class="btn btn-secondary">View Demo Dashboard</a>
                 </div>
                 <div class="hero-metrics">
-                    <div class="metric-tile">
+                    <div class="metric-tile" data-progress="0.94">
                         <strong>500+</strong>
                         <span>Exercise options</span>
+                        <div class="metric-track" aria-hidden="true"><span class="metric-fill"></span></div>
                     </div>
-                    <div class="metric-tile">
+                    <div class="metric-tile" data-progress="0.82">
                         <strong>24/7</strong>
                         <span>Student-ready access</span>
+                        <div class="metric-track" aria-hidden="true"><span class="metric-fill"></span></div>
                     </div>
-                    <div class="metric-tile">
+                    <div class="metric-tile" data-progress="1">
                         <strong>100%</strong>
                         <span>Course-project focused</span>
+                        <div class="metric-track" aria-hidden="true"><span class="metric-fill"></span></div>
                     </div>
                 </div>
             </section>
 
             <section class="section-stack" style="margin-top: 1.5rem;">
-                <section class="feature-section">
+                <section class="logic-section">
                     <div class="section-heading">
-                        <div class="eyebrow">Features</div>
-                        <h2>Everything You Need to Succeed</h2>
-                        <p>From workout planning to progress tracking, SweatLogic can keep the same core product direction while feeling much closer to the richer UI reference.</p>
+                        <div class="eyebrow">The SweatLogic System</div>
+                        <h2>One Word. Five Features.</h2>
+                        <p>Every letter maps to a part of the app.</p>
                     </div>
-                    <div class="feature-grid">
-                        <article class="feature-card">
-                            <div class="icon-chip">S</div>
-                            <h3>Smart Workouts</h3>
-                            <p>Build around your existing recommendation logic and keep the body-part workflow front and center.</p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="icon-chip blue">P</div>
-                            <h3>Track Progress</h3>
-                            <p>Review workout history, totals, and trends without changing the current backend data model.</p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="icon-chip">M</div>
-                            <h3>Campus Map</h3>
-                            <p>Guide students through the UNT rec center with labeled zones and a stronger visual layout.</p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="icon-chip blue">G</div>
-                            <h3>Goal Setting</h3>
-                            <p>Support session-based fitness goals in a way that stays honest about current storage limits.</p>
-                        </article>
+                    <div class="logic-stack">
+                        <a href="dashboard.html" class="logic-row">
+                            <span class="logic-letter" style="color:var(--green)">L</span>
+                            <div class="logic-body">
+                                <strong class="logic-word">Log</strong>
+                                <p class="logic-def">Record every workout — type, duration, and notes. Your full history, always on hand.</p>
+                            </div>
+                            <span class="logic-tag">Dashboard →</span>
+                        </a>
+                        <a href="workout.html" class="logic-row">
+                            <span class="logic-letter" style="color:#1a8b6e">O</span>
+                            <div class="logic-body">
+                                <strong class="logic-word">Optimize</strong>
+                                <p class="logic-def">Get smart workout plans matched to your body part, goal, and experience level.</p>
+                            </div>
+                            <span class="logic-tag">Workout →</span>
+                        </a>
+                        <a href="map.html" class="logic-row">
+                            <span class="logic-letter" style="color:#178578">G</span>
+                            <div class="logic-body">
+                                <strong class="logic-word">Guide</strong>
+                                <p class="logic-def">Navigate the UNT Rec Center floor by floor with clickable zones and equipment details.</p>
+                            </div>
+                            <span class="logic-tag">Map →</span>
+                        </a>
+                        <a href="progress.html" class="logic-row">
+                            <span class="logic-letter" style="color:#148599">I</span>
+                            <div class="logic-body">
+                                <strong class="logic-word">Insights</strong>
+                                <p class="logic-def">Review your streaks, weekly totals, and workout trends to see how far you've come.</p>
+                            </div>
+                            <span class="logic-tag">Progress →</span>
+                        </a>
+                        <a href="settings.html" class="logic-row">
+                            <span class="logic-letter" style="color:var(--blue)">C</span>
+                            <div class="logic-body">
+                                <strong class="logic-word">Customize</strong>
+                                <p class="logic-def">Set your fitness goal, experience level, and unit preference so recommendations fit you.</p>
+                            </div>
+                            <span class="logic-tag">Settings →</span>
+                        </a>
                     </div>
                 </section>
 

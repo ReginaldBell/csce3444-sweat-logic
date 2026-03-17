@@ -34,6 +34,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (barEl) barEl.style.width = pct + '%';
         });
 
+        var summaryCards = document.querySelectorAll('.progress-stat-row .stat-card');
+        var avgSession = workouts.length > 0 ? Math.round(totalMin / workouts.length) : 0;
+        var cardProgress = [
+            Math.min(workouts.length / 40, 1),
+            Math.min(totalMin / 1200, 1),
+            Math.min(avgSession / 90, 1)
+        ];
+        summaryCards.forEach(function(card, index) {
+            if (typeof window.setMotionProgress === 'function') {
+                window.setMotionProgress(card, cardProgress[index] || 0);
+            }
+        });
+
         // Recent history list
         var historyList = document.getElementById('history-list');
         if (historyList && workouts.length > 0) {

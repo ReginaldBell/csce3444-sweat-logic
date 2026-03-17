@@ -43,6 +43,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (sessionsCount) sessionsCount.textContent = weeklyCount;
         if (timeTotal) timeTotal.textContent = totalDuration;
 
+        const streakEl = document.getElementById('streak-count');
+        if (streakEl) {
+            streakEl.textContent = weeklyCount > 0 ? Math.min(weeklyCount, 7) : '--';
+        }
+
+        const statCards = document.querySelectorAll('.stat-card');
+        const progressValues = [
+            Math.min(weeklyCount / 7, 1),
+            Math.min(totalDuration / 300, 1),
+            weeklyCount > 0 ? Math.min(Math.round(totalDuration / weeklyCount) / 90, 1) : 0,
+            weeklyCount > 0 ? Math.min(weeklyCount / 7, 1) : 0,
+        ];
+        statCards.forEach((card, index) => {
+            if (typeof window.setMotionProgress === 'function') {
+                window.setMotionProgress(card, progressValues[index] || 0);
+            }
+        });
+
         if (typeof window.refreshMotion === 'function') {
             window.refreshMotion();
         }

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('settings-form');
+    const status = document.getElementById('settings-status');
 
     // Load saved settings
     form.username.value = localStorage.getItem('username') || '';
@@ -9,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         localStorage.setItem('username', form.username.value);
         localStorage.setItem('unit', form.unit.value);
-        alert('Settings saved!');
+        if (status) {
+            status.textContent = 'Settings saved locally and ready across the app.';
+            status.classList.add('is-visible');
+        }
+
+        if (typeof window.refreshMotion === 'function') {
+            window.refreshMotion();
+        }
     });
 });
