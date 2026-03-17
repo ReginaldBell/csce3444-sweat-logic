@@ -4,27 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>SweatLogic</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="workout.html">Workout</a>
-            <a href="progress.html">Progress</a>
-            <a href="map.html">Map</a>
-            <a href="settings.html">Settings</a>
-        </nav>
-    </header>
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a class="is-active" href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="workout.html">Plan Workout</a>
+            </div>
+        </header>
 
-    <main>
-        <h2>Activity Map</h2>
-        <div id="map-container">
-            <div id="map"></div>
-        </div>
-    </main>
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Facility Guide</div>
+                <h2 class="page-title">UNT Rec Center <span class="gradient-text">Navigator</span></h2>
+                <p class="page-lead">Explore the UNT Recreation Center layout, find equipment zones, and plan your visit. This is a static informational map, not live tracking.</p>
+            </section>
+
+            <div class="map-split">
+                <!-- Left: Map Area -->
+                <div class="map-main">
+                    <div id="map-container" style="border: none; box-shadow: none; padding: 0; min-height: auto;">
+                        <div id="map">Static interactive map area</div>
+                    </div>
+                </div>
+
+                <!-- Right: Sidebar -->
+                <div class="map-sidebar">
+                    <div class="map-info-card">
+                        <h4>Zone Legend</h4>
+                        <ul class="legend-list">
+                            <li>
+                                <span class="legend-dot green"></span>
+                                Free Weights Area
+                            </li>
+                            <li>
+                                <span class="legend-dot blue"></span>
+                                Cardio Machines
+                            </li>
+                            <li>
+                                <span class="legend-dot orange"></span>
+                                Group Fitness Studios
+                            </li>
+                            <li>
+                                <span class="legend-dot purple"></span>
+                                Basketball / Courts
+                            </li>
+                            <li>
+                                <span class="legend-dot red"></span>
+                                Pool & Aquatics
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="map-info-card">
+                        <h4>Building Hours</h4>
+                        <ul class="hours-list">
+                            <li>
+                                <span>Mon - Fri</span>
+                                <span>6:00 AM - 11:00 PM</span>
+                            </li>
+                            <li>
+                                <span>Saturday</span>
+                                <span>8:00 AM - 9:00 PM</span>
+                            </li>
+                            <li>
+                                <span>Sunday</span>
+                                <span>10:00 AM - 9:00 PM</span>
+                            </li>
+                            <li>
+                                <span>Holidays</span>
+                                <span>Hours may vary</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="map-info-card">
+                        <h4>Tips & Info</h4>
+                        <div class="map-tip">
+                            <strong>Peak Hours</strong>
+                            <span>Expect crowds from 4 PM to 7 PM on weekdays. Mornings before 9 AM are typically less busy.</span>
+                        </div>
+                        <div class="map-tip">
+                            <strong>Equipment</strong>
+                            <span>Free weights and squat racks are on the main floor. Machines are grouped by muscle group.</span>
+                        </div>
+                        <div class="map-tip">
+                            <strong>Lockers</strong>
+                            <span>Day-use lockers are available near the entrance. Bring your own lock.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Map interactions stay static and informative, not real-time.</p>
+            </div>
+        </footer>
+    </div>
 
     <script src="js/main.js"></script>
 </body>

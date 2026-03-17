@@ -4,41 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>SweatLogic</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="workout.html">Workout</a>
-            <a href="progress.html">Progress</a>
-            <a href="map.html">Map</a>
-            <a href="settings.html">Settings</a>
-        </nav>
-    </header>
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a class="is-active" href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="progress.html">View Progress</a>
+            </div>
+        </header>
 
-    <main>
-        <h2>Log Workout</h2>
-        <form id="workout-form">
-            <label for="workout-type">Type</label>
-            <select id="workout-type" name="type">
-                <option value="running">Running</option>
-                <option value="cycling">Cycling</option>
-                <option value="weights">Weights</option>
-                <option value="other">Other</option>
-            </select>
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Workout Planner</div>
+                <h2 class="page-title">Plan & Log <span class="gradient-text">Your Session</span></h2>
+                <p class="page-lead">Set up your workout details on the left, then review your session info on the right. Every logged session feeds your dashboard and progress.</p>
+            </section>
 
-            <label for="duration">Duration (min)</label>
-            <input type="number" id="duration" name="duration" min="1" required>
+            <div class="workout-split">
+                <!-- Left: Form Controls -->
+                <form id="workout-form">
+                    <div class="form-section">
+                        <div class="form-section-title">Workout Details</div>
+                        <div class="form-row">
+                            <div>
+                                <label for="workout-type">Type</label>
+                                <select id="workout-type" name="type">
+                                    <option value="running">Running</option>
+                                    <option value="cycling">Cycling</option>
+                                    <option value="weights">Weights</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="duration">Duration (min)</label>
+                                <input type="number" id="duration" name="duration" min="1" required placeholder="e.g. 45">
+                            </div>
+                        </div>
+                    </div>
 
-            <label for="notes">Notes</label>
-            <textarea id="notes" name="notes" rows="4"></textarea>
+                    <div class="form-section">
+                        <div class="form-section-title">Session Notes</div>
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="How did it go? Any highlights or goals hit?"></textarea>
+                    </div>
 
-            <button type="submit" class="btn">Save Workout</button>
-        </form>
-    </main>
+                    <button type="submit" class="btn">Save Workout</button>
+                </form>
+
+                <!-- Right: Output / Preview Panel -->
+                <div class="workout-output-panel">
+                    <h3>Session Preview</h3>
+                    <p>Your workout details will appear here as you fill them in. After saving, check the dashboard for your updated stats.</p>
+
+                    <div class="recommendation-card">
+                        <div class="recommendation-label">Suggested Next</div>
+                        <div class="recommendation-row">
+                            <div class="recommendation-icon">W</div>
+                            <div>
+                                <strong>Full Body Session</strong>
+                                <span>Mix of compound lifts</span>
+                            </div>
+                            <em>&rarr;</em>
+                        </div>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-label">Quick Tip</div>
+                        <p>Aim for at least 150 minutes of moderate activity per week. Consistency beats intensity for long-term progress.</p>
+                    </div>
+
+                    <div class="mini-metric-grid" style="margin-top: 1.25rem;">
+                        <div class="mini-metric" style="background: rgba(255,255,255,0.8); border: 1px solid rgba(16,32,51,0.08); border-radius: 16px;">
+                            <span>Running</span>
+                            <strong>Cardio</strong>
+                        </div>
+                        <div class="mini-metric" style="background: rgba(255,255,255,0.8); border: 1px solid rgba(16,32,51,0.08); border-radius: 16px;">
+                            <span>Weights</span>
+                            <strong>Strength</strong>
+                        </div>
+                        <div class="mini-metric" style="background: rgba(255,255,255,0.8); border: 1px solid rgba(16,32,51,0.08); border-radius: 16px;">
+                            <span>Cycling</span>
+                            <strong>Endurance</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Workout logging stays tied to existing form IDs and API contract.</p>
+            </div>
+        </footer>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/workout.js"></script>

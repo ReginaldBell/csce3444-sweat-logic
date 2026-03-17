@@ -4,35 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>SweatLogic</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="workout.html">Workout</a>
-            <a href="progress.html">Progress</a>
-            <a href="map.html">Map</a>
-            <a href="settings.html">Settings</a>
-        </nav>
-    </header>
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a class="is-active" href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="workout.html">Log Workout</a>
+            </div>
+        </header>
 
-    <main>
-        <h2>Dashboard</h2>
-        <section id="summary">
-            <div class="card" id="recent-workouts">
-                <h3>Recent Workouts</h3>
-                <ul id="workout-list"></ul>
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Dashboard</div>
+                <h2 class="page-title">Your Fitness <span class="gradient-text">Command Center</span></h2>
+                <p class="page-lead">Track your recent activity, weekly totals, and workout trends all in one place. Everything here stays grounded in your real workout history.</p>
+            </section>
+
+            <!-- Stat Cards Row -->
+            <div class="stat-row">
+                <div class="stat-card">
+                    <div class="stat-icon">W</div>
+                    <span class="stat-value" id="total-workouts">0</span>
+                    <span class="stat-label">Workouts This Week</span>
+                </div>
+                <div class="stat-card accent-blue">
+                    <div class="stat-icon">T</div>
+                    <span class="stat-value" id="total-duration">0</span>
+                    <span class="stat-label">Minutes Logged</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">A</div>
+                    <span class="stat-value" id="avg-duration">--</span>
+                    <span class="stat-label">Avg Duration (min)</span>
+                </div>
+                <div class="stat-card accent-blue">
+                    <div class="stat-icon">S</div>
+                    <span class="stat-value" id="streak-count">--</span>
+                    <span class="stat-label">Current Streak</span>
+                </div>
             </div>
-            <div class="card" id="weekly-stats">
-                <h3>This Week</h3>
-                <p>Total workouts: <span id="total-workouts">0</span></p>
-                <p>Total duration: <span id="total-duration">0</span> min</p>
+
+            <!-- Two-Column Dashboard Grid -->
+            <section id="summary" class="dash-grid">
+                <div class="dash-panel" id="recent-workouts">
+                    <h3>Recent Activity <span class="panel-badge">Live</span></h3>
+                    <div id="workout-list"></div>
+                    <p id="empty-state" style="color: var(--muted); font-size: 0.92rem; display: none;">No workouts logged yet. Start your first session to see activity here.</p>
+                </div>
+
+                <div style="display: grid; gap: 1.25rem;">
+                    <div class="dash-panel" id="weekly-stats">
+                        <h3>Weekly Summary</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                            <div class="info-tile">
+                                <h4>Total Sessions</h4>
+                                <p><strong id="weekly-sessions-count">0</strong> workouts completed</p>
+                            </div>
+                            <div class="info-tile">
+                                <h4>Total Time</h4>
+                                <p><strong id="weekly-time-total">0</strong> minutes active</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dash-panel">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <a href="workout.html" class="quick-action-btn">
+                                <span class="qa-icon">+</span>
+                                Log Workout
+                            </a>
+                            <a href="progress.html" class="quick-action-btn">
+                                <span class="qa-icon">P</span>
+                                View Progress
+                            </a>
+                            <a href="map.html" class="quick-action-btn">
+                                <span class="qa-icon">M</span>
+                                Rec Center Map
+                            </a>
+                            <a href="settings.html" class="quick-action-btn">
+                                <span class="qa-icon">G</span>
+                                Settings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Live workout summaries grounded in existing API data.</p>
             </div>
-        </section>
-    </main>
+        </footer>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/dashboard.js"></script>

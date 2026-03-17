@@ -4,34 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>SweatLogic</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="workout.html">Workout</a>
-            <a href="progress.html">Progress</a>
-            <a href="map.html">Map</a>
-            <a href="settings.html">Settings</a>
-        </nav>
-    </header>
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a class="is-active" href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="dashboard.html">Back to Dashboard</a>
+            </div>
+        </header>
 
-    <main>
-        <h2>Progress</h2>
-        <section id="progress-charts">
-            <div class="card">
-                <h3>Workouts Over Time</h3>
-                <canvas id="workouts-chart"></canvas>
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Progress Tracker</div>
+                <h2 class="page-title">Analyze Your <span class="gradient-text">Performance</span></h2>
+                <p class="page-lead">Visualize your workout trends, track total activity, and understand your training patterns over time. All data comes from your logged workouts.</p>
+            </section>
+
+            <!-- Top Summary Stats -->
+            <div class="progress-stat-row">
+                <div class="stat-card">
+                    <div class="stat-icon">T</div>
+                    <span class="stat-value" id="progress-total-workouts">--</span>
+                    <span class="stat-label">Total Workouts</span>
+                </div>
+                <div class="stat-card accent-blue">
+                    <div class="stat-icon">H</div>
+                    <span class="stat-value" id="progress-total-hours">--</span>
+                    <span class="stat-label">Total Hours</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">A</div>
+                    <span class="stat-value" id="progress-avg-session">--</span>
+                    <span class="stat-label">Avg Session (min)</span>
+                </div>
             </div>
-            <div class="card">
-                <h3>Duration Over Time</h3>
-                <canvas id="duration-chart"></canvas>
+
+            <!-- Charts Grid -->
+            <section id="progress-charts" class="progress-grid">
+                <div class="chart-panel">
+                    <h3>Workouts Over Time</h3>
+                    <p class="chart-subtitle">Number of sessions per period</p>
+                    <div class="chart-frame">
+                        <canvas id="workouts-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-panel">
+                    <h3>Duration Over Time</h3>
+                    <p class="chart-subtitle">Total minutes per period</p>
+                    <div class="chart-frame">
+                        <canvas id="duration-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workout Breakdown -->
+            <div class="progress-grid" style="margin-top: 1.5rem;">
+                <div class="breakdown-panel">
+                    <h3>Workout Type Breakdown</h3>
+                    <div id="type-breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-bar-wrapper">
+                                <div class="breakdown-bar-label">
+                                    <span>Running</span>
+                                    <span id="running-pct">--</span>
+                                </div>
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-bar-fill" id="running-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-bar-wrapper">
+                                <div class="breakdown-bar-label">
+                                    <span>Cycling</span>
+                                    <span id="cycling-pct">--</span>
+                                </div>
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-bar-fill" id="cycling-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-bar-wrapper">
+                                <div class="breakdown-bar-label">
+                                    <span>Weights</span>
+                                    <span id="weights-pct">--</span>
+                                </div>
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-bar-fill" id="weights-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-bar-wrapper">
+                                <div class="breakdown-bar-label">
+                                    <span>Other</span>
+                                    <span id="other-pct">--</span>
+                                </div>
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-bar-fill" id="other-bar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-panel">
+                    <h3>Recent History</h3>
+                    <ul class="history-list" id="history-list">
+                        <li style="color: var(--muted); font-size: 0.92rem;">Log workouts to see your history here.</li>
+                    </ul>
+                </div>
             </div>
-        </section>
-    </main>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Progress remains based on workout history rather than new unsupported endpoints.</p>
+            </div>
+        </footer>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/progress.js"></script>
