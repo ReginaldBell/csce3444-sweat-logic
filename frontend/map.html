@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map - SweatLogic</title>
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <div class="site-shell">
@@ -34,61 +35,68 @@
                 <p class="page-lead">Explore the UNT Recreation Center layout, find equipment zones, and plan your visit. This is a static informational map, not live tracking.</p>
             </section>
 
-            <div class="map-split">
-                <!-- Left: Map Area -->
+            <div class="map-stack">
+                <!-- Full-width Map Area -->
                 <div class="map-main">
-                    <div id="map-container" style="border: none; box-shadow: none; padding: 0; min-height: auto;">
-                        <div id="map">Static interactive map area</div>
+                    <div class="floor-tabs">
+                        <button class="floor-tab active" data-floor="1">1st Floor</button>
+                        <button class="floor-tab" data-floor="2">2nd Floor</button>
+                    </div>
+                    <div id="map-container">
+                        <div id="canvas-1" class="map-canvas floor-canvas active"></div>
+                        <div id="canvas-2" class="map-canvas floor-canvas"></div>
                     </div>
                 </div>
 
-                <!-- Right: Sidebar -->
-                <div class="map-sidebar">
+                <!-- Info cards below the map -->
+                <div class="map-below">
                     <div class="map-info-card">
                         <h4>Zone Legend</h4>
+                        <ul class="legend-list-grid">
+                            <li><i class="fa-solid fa-person-running"></i> Cardio Machines</li>
+                            <li><i class="fa-solid fa-volleyball"></i> Sand Volleyball</li>
+                            <li><i class="fa-solid fa-dumbbell"></i> Weightroom</li>
+                            <li><i class="fa-solid fa-volleyball"></i> Volleyball</li>
+                            <li><i class="fa-solid fa-shuttlecock fa-solid"></i> Badminton</li>
+                            <li><i class="fa-solid fa-person-swimming"></i> Leisure Pool</li>
+                            <li><i class="fa-solid fa-restroom"></i> M/W Lockeroom</li>
+                            <li><i class="fa-solid fa-mountain"></i> Climbing Wall</li>
+                            <li><i class="fa-solid fa-basketball"></i> Basketball</li>
+                            <li><i class="fa-solid fa-droplet"></i> Water Fountain</li>
+                            <li><i class="fa-solid fa-person-swimming"></i> Lap Pool</li>
+                            <li><i class="fa-solid fa-elevator"></i> Elevator</li>
+                            <li><i class="fa-solid fa-tent"></i> Outdoor Pursuits</li>
+                            <li><i class="fa-solid fa-futbol"></i> Soccer</li>
+                            <li><i class="fa-solid fa-blender-phone"></i> Smoothie King</li>
+                        </ul>
+                    </div>
+
+                    <div class="map-info-card">
+                        <h4>Key Locations</h4>
+                        <ul class="legend-list numbered-legend">
+                            <li><span class="legend-number">1</span> Member Services</li>
+                            <li><span class="legend-number">2</span> Rec Sports Office</li>
+                            <li><span class="legend-number">3</span> Backyard</li>
+                            <li><span class="legend-number">4</span> Fitness Office</li>
+                            <li><span class="legend-number">5</span> PointBank Lounge</li>
+                        </ul>
+                        <h4 style="margin-top:1.25rem;">Amenities</h4>
                         <ul class="legend-list">
-                            <li>
-                                <span class="legend-dot green"></span>
-                                Free Weights Area
-                            </li>
-                            <li>
-                                <span class="legend-dot blue"></span>
-                                Cardio Machines
-                            </li>
-                            <li>
-                                <span class="legend-dot orange"></span>
-                                Group Fitness Studios
-                            </li>
-                            <li>
-                                <span class="legend-dot purple"></span>
-                                Basketball / Courts
-                            </li>
-                            <li>
-                                <span class="legend-dot red"></span>
-                                Pool & Aquatics
-                            </li>
+                            <li>M/W Lockeroom</li>
+                            <li>Elevator</li>
+                            <li>Water Fountain</li>
+                            <li>Smoothie King</li>
+                            <li>Outdoor Pursuits Center</li>
                         </ul>
                     </div>
 
                     <div class="map-info-card">
                         <h4>Building Hours</h4>
                         <ul class="hours-list">
-                            <li>
-                                <span>Mon - Fri</span>
-                                <span>6:00 AM - 11:00 PM</span>
-                            </li>
-                            <li>
-                                <span>Saturday</span>
-                                <span>8:00 AM - 9:00 PM</span>
-                            </li>
-                            <li>
-                                <span>Sunday</span>
-                                <span>10:00 AM - 9:00 PM</span>
-                            </li>
-                            <li>
-                                <span>Holidays</span>
-                                <span>Hours may vary</span>
-                            </li>
+                            <li><span>Mon - Fri</span><span>6:00 AM - 11:00 PM</span></li>
+                            <li><span>Saturday</span><span>8:00 AM - 9:00 PM</span></li>
+                            <li><span>Sunday</span><span>10:00 AM - 9:00 PM</span></li>
+                            <li><span>Holidays</span><span>Hours may vary</span></li>
                         </ul>
                     </div>
 
@@ -96,15 +104,15 @@
                         <h4>Tips & Info</h4>
                         <div class="map-tip">
                             <strong>Peak Hours</strong>
-                            <span>Expect crowds from 4 PM to 7 PM on weekdays. Mornings before 9 AM are typically less busy.</span>
+                            <span>4 PM – 7 PM on weekdays. Mornings before 9 AM are typically less busy.</span>
                         </div>
                         <div class="map-tip">
                             <strong>Equipment</strong>
-                            <span>Free weights and squat racks are on the main floor. Machines are grouped by muscle group.</span>
+                            <span>Free weights and squat racks on the main floor. Machines grouped by muscle group.</span>
                         </div>
                         <div class="map-tip">
                             <strong>Lockers</strong>
-                            <span>Day-use lockers are available near the entrance. Bring your own lock.</span>
+                            <span>Day-use lockers near the entrance. Bring your own lock.</span>
                         </div>
                     </div>
                 </div>
@@ -129,6 +137,79 @@
         </footer>
     </div>
 
+    <script>
+        // ── Zone data (source of truth) ──────────────────────────────────────
+        const floor1Zones = [
+            { id: "soccer",       label: "Soccer",          icon: "fa-futbol",          color: "green",  position: { x: 2,  y: 2,  w: 27, h: 28 } },
+            { id: "courts-a",    label: "Courts A",         icon: "fa-basketball",      color: "green",  position: { x: 2,  y: 32, w: 27, h: 20 } },
+            { id: "courts-b",    label: "Courts B",         icon: "fa-volleyball",      color: "green",  position: { x: 2,  y: 54, w: 27, h: 20 } },
+            { id: "courts-c",    label: "Courts C",         icon: "fa-table-tennis-paddle-ball", color: "green", position: { x: 2, y: 76, w: 27, h: 22 } },
+            { id: "leisure-pool",label: "Leisure Pool",     icon: "fa-person-swimming", color: "blue",   position: { x: 31, y: 2,  w: 20, h: 28 } },
+            { id: "lap-pool",    label: "Lap Pool",         icon: "fa-person-swimming", color: "blue",   position: { x: 31, y: 32, w: 20, h: 20 } },
+            { id: "lockers",     label: "Lockers",          icon: "fa-lock",            color: "gray",   position: { x: 31, y: 54, w: 20, h: 18 } },
+            { id: "sand-vball",  label: "Sand Volleyball",  icon: "fa-volleyball",      color: "orange", position: { x: 53, y: 2,  w: 21, h: 20 } },
+            { id: "weights",     label: "Weight Room",      icon: "fa-dumbbell",        color: "green",  position: { x: 53, y: 24, w: 21, h: 26 } },
+            { id: "fitness-ofc", label: "Fitness Office",   icon: "fa-clipboard",       color: "gray",   position: { x: 53, y: 52, w: 21, h: 18 } },
+            { id: "entrance",    label: "Front Entrance",   icon: "fa-door-open",       color: "gray",   position: { x: 53, y: 72, w: 21, h: 18 } },
+            { id: "cardio",      label: "Cardio Machines",  icon: "fa-person-running",  color: "green",  position: { x: 76, y: 2,  w: 22, h: 28 } },
+            { id: "climbing",    label: "Climbing Wall",    icon: "fa-mountain",        color: "orange", position: { x: 76, y: 32, w: 22, h: 22 } },
+            { id: "opc",         label: "Outdoor Pursuits", icon: "fa-tent",            color: "green",  position: { x: 76, y: 56, w: 22, h: 22 } },
+            { id: "smoothie",    label: "Smoothie King",    icon: "fa-blender",         color: "orange", position: { x: 76, y: 80, w: 22, h: 18 } },
+        ];
+
+        const floor2Zones = [
+            { id: "track",     label: "Running Track", icon: "fa-person-running", color: "orange", position: { x: 5,  y: 5,  w: 90, h: 48 } },
+            { id: "weights-2", label: "Weight Room",   icon: "fa-dumbbell",       color: "green",  position: { x: 5,  y: 56, w: 42, h: 38 } },
+            { id: "cardio-2",  label: "Cardio Floor",  icon: "fa-heart-pulse",    color: "green",  position: { x: 53, y: 56, w: 42, h: 38 } },
+        ];
+
+        // ── Render engine ────────────────────────────────────────────────────
+        function renderZones(zones, canvasId) {
+            const canvas = document.getElementById(canvasId);
+            canvas.innerHTML = "";
+            zones.forEach(function(z) {
+                const el = document.createElement("div");
+                el.className = "map-zone " + z.color;
+                el.dataset.zone = z.id;
+                el.style.top    = z.position.y + "%";
+                el.style.left   = z.position.x + "%";
+                el.style.width  = z.position.w + "%";
+                el.style.height = z.position.h + "%";
+                el.innerHTML = '<i class="fa-solid ' + z.icon + '"></i><span>' + z.label + '</span>';
+                canvas.appendChild(el);
+            });
+        }
+
+        // ── State engine ─────────────────────────────────────────────────────
+        var activeZone = null;
+        function setActiveZone(id) {
+            document.querySelectorAll(".map-zone").forEach(function(z) {
+                z.classList.remove("active");
+            });
+            var el = document.querySelector('[data-zone="' + id + '"]');
+            if (el) el.classList.add("active");
+            activeZone = id;
+        }
+
+        document.addEventListener("click", function(e) {
+            var zone = e.target.closest(".map-zone");
+            if (zone) setActiveZone(zone.dataset.zone);
+        });
+
+        // ── Floor tab switching ───────────────────────────────────────────────
+        document.querySelectorAll('.floor-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.floor-tab').forEach(function(t) { t.classList.remove('active'); });
+                document.querySelectorAll('.floor-canvas').forEach(function(c) { c.classList.remove('active'); });
+                tab.classList.add('active');
+                document.getElementById('canvas-' + tab.dataset.floor).classList.add('active');
+            });
+        });
+
+        // ── Init ─────────────────────────────────────────────────────────────
+        renderZones(floor1Zones, "canvas-1");
+        renderZones(floor2Zones, "canvas-2");
+    </script>
     <script src="js/main.js"></script>
 </body>
 </html>

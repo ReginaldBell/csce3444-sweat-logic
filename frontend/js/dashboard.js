@@ -43,6 +43,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (sessionsCount) sessionsCount.textContent = weeklyCount;
         if (timeTotal) timeTotal.textContent = totalDuration;
 
+        if (typeof window.refreshMotion === 'function') {
+            window.refreshMotion();
+        }
+
     } catch (err) {
         console.error('Failed to load dashboard data:', err);
     }

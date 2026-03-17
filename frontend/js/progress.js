@@ -49,6 +49,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        if (typeof window.refreshMotion === 'function') {
+            window.refreshMotion();
+        }
+
         // TODO: render charts using workouts data
     } catch (err) {
         console.error('Failed to load progress data:', err);
