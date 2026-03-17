@@ -275,11 +275,76 @@ function refreshProgressTargets(root = document) {
     });
 }
 
-// asks user for weight when first click get started
+function getSelectedUnit() {
+    return localStorage.getItem('unit') || 'imperial';
+}
+
+function applyUnitSettings() {
+    const unit = getSelectedUnit();
+    const weightInput = document.getElementById('weight');
+    const heightInput = document.getElementById('height');
+    const unitNote = document.getElementById('unit-note');
+
+    if (!weightInput || !heightInput) {
+        return;
+    }
+
+    if (unit === 'metric') {
+        weightInput.placeholder = 'Weight (kg)';
+        heightInput.placeholder = 'Height (cm)';
+        if (unitNote) {
+            unitNote.innerText = 'Unit: Metric (kg, cm)';
+        }
+    } else {
+        weightInput.placeholder = 'Weight (lbs)';
+        heightInput.placeholder = 'Height (in)';
+        if (unitNote) {
+            unitNote.innerText = 'Unit: Imperial (lbs, in)';
+        }
+    }
+}
+
+function loadSavedProfile() {
+    const saved = localStorage.getItem('sweatlogic-profile');
+    if (!saved) {
+        return;
+    }
+
+    try {
+        const profile = JSON.parse(saved);
+        const fieldIds = ['name', 'age', 'gender', 'goal', 'weight', 'height'];
+
+        fieldIds.forEach((id) => {
+            const element = document.getElementById(id);
+            if (element && profile[id] !== undefined && profile[id] !== null) {
+                element.value = profile[id];
+            }
+        });
+
+        const bmiResult = document.getElementById('bmi-result');
+        const recommendation = document.getElementById('workout-recommendation');
+        const bmiSection = document.getElementById('bmi-section');
+
+        if (profile.bmi && profile.category && bmiResult) {
+            bmiResult.innerText = `Your BMI is ${profile.bmi} (${profile.category})`;
+            if (bmiSection) {
+                bmiSection.style.display = 'block';
+            }
+        }
+
+        if (profile.recommendation && recommendation) {
+            recommendation.innerText = `Recommendation: ${profile.recommendation}`;
+        }
+    } catch (err) {
+        console.warn('Invalid saved profile', err);
+    }
+}
+
 function showBMICalculator() {
     const bmiSection = document.getElementById('bmi-section');
     if (bmiSection) {
         bmiSection.style.display = 'block';
+        applyUnitSettings();
         prepareAnimatedElements(bmiSection);
         setupCountTargets(bmiSection);
         bmiSection.classList.add('is-visible');
@@ -288,22 +353,89 @@ function showBMICalculator() {
 }
 
 function calculateBMI() {
-    const weight = document.getElementById('weight').value;
-    const height = document.getElementById('height').value / 100;
+    const unit = getSelectedUnit();
+    const weightInput = document.getElementById('weight');
+    const heightInput = document.getElementById('height');
+    const recommendationEl = document.getElementById('workout-recommendation');
+    const goalInput = document.getElementById('goal');
+    const rawWeight = weightInput ? parseFloat(weightInput.value) : NaN;
+    const rawHeight = heightInput ? parseFloat(heightInput.value) : NaN;
+    let bmi;
 
-    if (weight > 0 && height > 0) {
-        const bmi = (weight / (height * height)).toFixed(1);
+    if (unit === 'metric') {
+        const heightMeters = rawHeight / 100;
+        if (rawWeight > 0 && heightMeters > 0) {
+            bmi = (rawWeight / (heightMeters * heightMeters)).toFixed(1);
+        }
+    } else if (rawWeight > 0 && rawHeight > 0) {
+        bmi = ((703 * rawWeight) / (rawHeight * rawHeight)).toFixed(1);
+    }
+
+    if (bmi) {
         let category = '';
+        let recommendation = '';
+        const userGoal = goalInput ? goalInput.value : '';
 
         if (bmi < 18.5) category = 'Underweight';
         else if (bmi < 24.9) category = 'Normal weight';
         else if (bmi < 29.9) category = 'Overweight';
         else category = 'Obese';
 
-        document.getElementById('bmi-result').innerText = `Your BMI is ${bmi} (${category})`;
+        if (userGoal === 'Lose weight') {
+            recommendation = 'Focus on higher-volume cardio and calorie-burning sessions.';
+        } else if (userGoal === 'Gain muscle') {
+            recommendation = 'Focus on compound lifts and progressive overload for strength gains.';
+        } else if (userGoal === 'Improve endurance') {
+            recommendation = 'Prioritize steady-state cardio and higher-rep training blocks.';
+        } else if (userGoal === 'Maintain') {
+            recommendation = 'Balance lighter cardio days with a few consistent strength sessions.';
+        }
+
+        const bmiResult = document.getElementById('bmi-result');
+        if (bmiResult) {
+            bmiResult.innerText = `Your BMI is ${bmi} (${category})`;
+        }
+
+        if (recommendationEl && recommendation) {
+            recommendationEl.innerText = `Recommendation: ${recommendation}`;
+        }
+
+        const profile = {
+            name: document.getElementById('name')?.value?.trim() || '',
+            age: document.getElementById('age')?.value?.trim() || '',
+            gender: document.getElementById('gender')?.value || '',
+            goal: userGoal,
+            weight: rawWeight,
+            height: rawHeight,
+            unit,
+            bmi,
+            category,
+            recommendation,
+            updatedAt: new Date().toISOString(),
+        };
+        localStorage.setItem('sweatlogic-profile', JSON.stringify(profile));
         queueMotionRefresh();
     } else {
         alert('Please enter a valid height and weight!');
+    }
+}
+
+function clearProfile() {
+    localStorage.removeItem('sweatlogic-profile');
+    ['name', 'age', 'gender', 'goal', 'weight', 'height'].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = '';
+        }
+    });
+
+    const bmiResult = document.getElementById('bmi-result');
+    const recommendation = document.getElementById('workout-recommendation');
+    if (bmiResult) {
+        bmiResult.innerText = '';
+    }
+    if (recommendation) {
+        recommendation.innerText = '';
     }
 }
 
@@ -317,5 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
         element.dataset.progress = clampProgress(progress).toFixed(3);
         setMeterScale(element, progress);
     };
+    window.clearProfile = clearProfile;
+    applyUnitSettings();
+    loadSavedProfile();
     initializeMotion();
 });
