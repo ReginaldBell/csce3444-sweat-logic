@@ -169,3 +169,46 @@ function clearProfile() {
     const bmiSection = document.getElementById('bmi-section');
     if (bmiSection) bmiSection.style.display = 'none';
 }
+
+
+function generateCalendar(){
+    const grid = document.getElementById('calendar-grid');
+    const monthLabel = document.getElementById('calendar-month');
+    if (!grid || !monthLabel) return;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November","December" ];
+    monthLabel.innerText = monthNames[month] + " " + year;
+
+    const firstDay = new Date(year, month, 1 ).getDay();
+    const daysInMonth = new Date(year, month +1, 0).getDate();
+
+    grid.innerHTML = "";
+
+    const workedOutDays = [2,4,5,10,12,13,15]; // Temp values
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = day === now.getDate();
+        const hasWorkout = workedOutDays.includes(day);
+
+        grid.innerHTML += `
+            <div style="
+                height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                font-size: 0.9em;
+                ${hasWorkout ? 'background: #32CD32; color: white;' : 'color: #333;'}
+                ${isToday ? 'border: 2px solid #1b1b1b;' : ''}
+            ">
+                ${day}
+            </div>
+        `;
+    }
+}
+
+window.addEventListener('load', () => {
+    generateCalendar();
+})
