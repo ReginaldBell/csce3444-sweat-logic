@@ -2719,3 +2719,32 @@ form .btn {
         transform: scale(1.08);
     }
 }
+
+
+.body-parts-recommendation{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.body-parts-style{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    background: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+}
+
+.body-parts-style:hover{
+    border-color: rgba(11, 143, 42, 0.3);
+    background: var(--green-soft);
+    color: var(--green-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 14px rgba(11, 143, 42, 0.1);
+}
