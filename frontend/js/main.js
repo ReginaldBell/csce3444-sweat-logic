@@ -28,7 +28,7 @@ const motionGroups = [
         step: 90,
     },
     {
-        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip',
+        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip, .workout-empty-state, .plan-summary-chip, .exercise-plan-item, .generated-plan-actions',
         animation: 'slide-right',
         step: 80,
     },
@@ -45,8 +45,30 @@ async function apiFetch(path, options = {}) {
         headers: { 'Content-Type': 'application/json' },
         ...options,
     });
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    return res.json();
+    if (res.status === 204) {
+        return null;
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+    let payload;
+
+    if (contentType.includes('application/json')) {
+        payload = await res.json();
+    } else {
+        payload = await res.text();
+    }
+
+    if (!res.ok) {
+        const message = typeof payload === 'string' && payload.trim()
+            ? payload.trim()
+            : `Request failed: ${res.status}`;
+        const error = new Error(message);
+        error.status = res.status;
+        error.payload = payload;
+        throw error;
+    }
+
+    return payload;
 }
 
 function findMatches(root, selector) {
@@ -275,6 +297,90 @@ function refreshProgressTargets(root = document) {
     });
 }
 
+function normalizeWorkoutDate(value) {
+    const parsed = new Date(value);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return null;
+    }
+
+    const year = parsed.getFullYear();
+    const month = parsed.getMonth();
+    const day = parsed.getDate();
+
+    return {
+        key: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        serial: Math.floor(Date.UTC(year, month, day) / 86400000),
+    };
+}
+
+function getWorkoutDaySerials(workouts = []) {
+    const uniqueSerials = new Set();
+
+    workouts.forEach((workout) => {
+        const normalized = normalizeWorkoutDate(workout.date);
+        if (normalized) {
+            uniqueSerials.add(normalized.serial);
+        }
+    });
+
+    return Array.from(uniqueSerials).sort((a, b) => a - b);
+}
+
+function getCurrentWorkoutStreak(daySerials) {
+    if (!daySerials.length) {
+        return 0;
+    }
+
+    const today = normalizeWorkoutDate(new Date());
+    if (!today) {
+        return 0;
+    }
+
+    const serialSet = new Set(daySerials);
+    if (!serialSet.has(today.serial)) {
+        return 0;
+    }
+
+    let streak = 0;
+    let cursor = today.serial;
+
+    while (serialSet.has(cursor)) {
+        streak += 1;
+        cursor -= 1;
+    }
+
+    return streak;
+}
+
+function getLongestWorkoutStreak(daySerials) {
+    if (!daySerials.length) {
+        return 0;
+    }
+
+    let longest = 0;
+    let current = 0;
+    let previous = null;
+
+    daySerials.forEach((serial) => {
+        current = previous !== null && serial === previous + 1 ? current + 1 : 1;
+        longest = Math.max(longest, current);
+        previous = serial;
+    });
+
+    return longest;
+}
+
+function getWorkoutMetrics(workouts = []) {
+    const daySerials = getWorkoutDaySerials(workouts);
+
+    return {
+        daySerials,
+        currentStreak: getCurrentWorkoutStreak(daySerials),
+        longestStreak: getLongestWorkoutStreak(daySerials),
+    };
+}
+
 function getSelectedUnit() {
     return localStorage.getItem('unit') || 'imperial';
 }
@@ -449,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.dataset.progress = clampProgress(progress).toFixed(3);
         setMeterScale(element, progress);
     };
+    window.getWorkoutMetrics = getWorkoutMetrics;
     window.clearProfile = clearProfile;
     applyUnitSettings();
     loadSavedProfile();

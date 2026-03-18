@@ -260,7 +260,7 @@ export const FLOORS = {
       "courtsB lockers    fitnessOfc opc"
       "courtsC lockers    entrance  smoothie"
     `,
-    gridTemplateColumns: '1.2fr 1fr 1fr 1fr',
+    gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
     gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
   },
   2: {
@@ -269,7 +269,7 @@ export const FLOORS = {
       "track    track"
       "weights2 cardio2"
     `,
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
     gridTemplateRows: '1.2fr 1fr',
   },
 };

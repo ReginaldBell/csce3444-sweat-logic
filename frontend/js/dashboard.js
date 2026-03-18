@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const workouts = await apiFetch('/workouts');
+        const metrics = typeof window.getWorkoutMetrics === 'function'
+            ? window.getWorkoutMetrics(workouts)
+            : { currentStreak: 0, longestStreak: 0 };
         const list = document.getElementById('workout-list');
         const emptyState = document.getElementById('empty-state');
 
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const streakEl = document.getElementById('streak-count');
         if (streakEl) {
-            streakEl.textContent = weeklyCount > 0 ? Math.min(weeklyCount, 7) : '--';
+            streakEl.textContent = metrics.currentStreak;
         }
 
         const statCards = document.querySelectorAll('.stat-card');
@@ -53,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             Math.min(weeklyCount / 7, 1),
             Math.min(totalDuration / 300, 1),
             weeklyCount > 0 ? Math.min(Math.round(totalDuration / weeklyCount) / 90, 1) : 0,
-            weeklyCount > 0 ? Math.min(weeklyCount / 7, 1) : 0,
+            Math.min(metrics.currentStreak / 7, 1),
         ];
         statCards.forEach((card, index) => {
             if (typeof window.setMotionProgress === 'function') {

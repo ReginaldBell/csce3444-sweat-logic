@@ -1,7 +1,11 @@
 import { state, setState } from './state.js';
-import { setMouse, render } from './render.js';
+import { setMouse } from './render.js';
 
-// ─── Named event handlers ─────────────────────────────────────────────────────
+const FLOOR_SWAP_DELAY_MS = 150;
+const FLOOR_ENTER_MS = 360;
+let floorTransitionTimer = null;
+let floorEnterTimer = null;
+
 export function onZoneClick(key) {
   setState({ activeZone: key, panelOpen: true });
 }
@@ -18,65 +22,95 @@ export function onPanelClose() {
   setState({ activeZone: null, panelOpen: false, hoveredZone: null });
 }
 
-export function onFloorChange(n) {
-  setState({ activeFloor: n, activeZone: null, panelOpen: false, hoveredZone: null });
+export function onFloorChange(floor) {
+  setState({ activeFloor: floor, activeZone: null, panelOpen: false, hoveredZone: null });
 }
 
-// ─── Wire all DOM listeners (called once on init) ─────────────────────────────
 export function attachEvents() {
-  const grid    = document.getElementById('map-grid');
-  const panel   = document.getElementById('side-panel');
-  const closeBtn= document.getElementById('panel-close');
+  const grid = document.getElementById('map-grid');
+  const closeButton = document.getElementById('panel-close');
+  const mapSurface = document.getElementById('map-surface');
 
-  // Zone click and hover — delegated to the grid
-  grid.addEventListener('click', e => {
-    const card = e.target.closest('.zone-card');
-    if (card) onZoneClick(card.dataset.key);
-  });
-
-  grid.addEventListener('mouseover', e => {
-    const card = e.target.closest('.zone-card');
-    if (card) onZoneHover(card.dataset.key);
-  });
-
-  grid.addEventListener('mouseout', e => {
-    const leaving = e.target.closest('.zone-card');
-    const entering = e.relatedTarget && e.relatedTarget.closest('.zone-card');
-    // Only fire leave when truly exiting the card (not moving between children)
-    if (leaving && leaving !== entering) onZoneLeave();
-  });
-
-  // Mouse tracking for tooltip positioning
-  document.addEventListener('mousemove', e => {
-    setMouse(e.clientX, e.clientY);
-    // Re-render tooltip position live without full render cycle
-    const tooltip = document.getElementById('map-tooltip');
-    if (tooltip && tooltip.classList.contains('visible')) {
-      tooltip.style.left = (e.clientX + 14) + 'px';
-      tooltip.style.top  = (e.clientY + 14) + 'px';
+  grid.addEventListener('click', (event) => {
+    const card = event.target.closest('.zone-card');
+    if (card) {
+      onZoneClick(card.dataset.key);
     }
   });
 
-  // Panel close button
-  closeBtn.addEventListener('click', onPanelClose);
+  grid.addEventListener('mouseover', (event) => {
+    const card = event.target.closest('.zone-card');
+    if (card) {
+      onZoneHover(card.dataset.key);
+    }
+  });
 
-  // Click outside panel to close (on the map surface)
-  document.getElementById('map-surface').addEventListener('click', e => {
-    if (state.panelOpen && !e.target.closest('.zone-card') && !e.target.closest('#side-panel')) {
+  grid.addEventListener('mouseout', (event) => {
+    const leaving = event.target.closest('.zone-card');
+    const entering = event.relatedTarget && event.relatedTarget.closest('.zone-card');
+    if (leaving && leaving !== entering) {
+      onZoneLeave();
+    }
+  });
+
+  document.addEventListener('mousemove', (event) => {
+    setMouse(event.clientX, event.clientY);
+    const tooltip = document.getElementById('map-tooltip');
+    if (tooltip && tooltip.classList.contains('visible')) {
+      tooltip.style.left = `${event.clientX + 14}px`;
+      tooltip.style.top = `${event.clientY + 14}px`;
+    }
+  });
+
+  closeButton.addEventListener('click', onPanelClose);
+
+  mapSurface.addEventListener('click', (event) => {
+    if (state.panelOpen && !event.target.closest('.zone-card') && !event.target.closest('#side-panel')) {
       onPanelClose();
     }
   });
 
-  // Floor switcher buttons
-  document.querySelectorAll('.floor-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const n = parseInt(btn.dataset.floor, 10);
-      if (n === state.activeFloor) return;
+  document.querySelectorAll('.floor-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextFloor = parseInt(button.dataset.floor, 10);
+      if (nextFloor === state.activeFloor) {
+        return;
+      }
 
-      document.querySelectorAll('.floor-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('.floor-btn').forEach((floorButton) => {
+        floorButton.classList.toggle('active', floorButton === button);
+      });
 
-      onFloorChange(n);
+      animateFloorChange(nextFloor, grid);
     });
   });
+}
+
+function animateFloorChange(nextFloor, grid) {
+  if (!grid || prefersReducedMotion()) {
+    onFloorChange(nextFloor);
+    return;
+  }
+
+  window.clearTimeout(floorTransitionTimer);
+  window.clearTimeout(floorEnterTimer);
+  grid.classList.remove('is-entering');
+  grid.classList.add('transitioning');
+
+  floorTransitionTimer = window.setTimeout(() => {
+    onFloorChange(nextFloor);
+
+    requestAnimationFrame(() => {
+      grid.classList.remove('transitioning');
+      grid.classList.add('is-entering');
+
+      floorEnterTimer = window.setTimeout(() => {
+        grid.classList.remove('is-entering');
+      }, FLOOR_ENTER_MS);
+    });
+  }, FLOOR_SWAP_DELAY_MS);
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
