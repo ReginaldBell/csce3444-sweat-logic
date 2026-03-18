@@ -12,7 +12,8 @@ body {
     background-image: url(https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png);
     background-repeat: no-repeat;
     background-position: -750px center;
-    background-size: 130%;
+    background-size: cover;
+    background-attachment: fixed;
         /* background-attachment: fixed; */
 }
 

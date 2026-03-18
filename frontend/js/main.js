@@ -9,6 +9,29 @@ async function apiFetch(path, options = {}) {
     return res.json();
 }
 
+function getSelectedUnit() {
+    return localStorage.getItem('unit') || 'imperial';
+}
+
+function applyUnitSettings() {
+    const unit = getSelectedUnit();
+    const weightInput = document.getElementById('weight');
+    const heightInput = document.getElementById('height');
+    const unitNote = document.getElementById('unit-note');
+
+    if (!weightInput || !heightInput) return;
+
+    if (unit === 'metric') {
+        weightInput.placeholder = 'Weight (kg)';
+        heightInput.placeholder = 'Height (cm)';
+        if (unitNote) unitNote.innerText = 'Unit: Metric (kg, cm)';
+    } else {
+        weightInput.placeholder = 'Weight (lbs)';
+        heightInput.placeholder = 'Height (in)';
+        if (unitNote) unitNote.innerText = 'Unit: Imperial (lbs, in)';
+    }
+}
+
 // asks user for weight when first click get started
 function showBMICalculator() {
     const bmiSection = document.getElementById('bmi-section');
@@ -44,16 +67,31 @@ function loadSavedProfile() {
     }
 }
 
-window.addEventListener('DOMContentLoaded', loadSavedProfile);
+window.addEventListener('DOMContentLoaded', () => {
+    applyUnitSettings();
+    loadSavedProfile();
+});
 
 function calculateBMI() {
-    const weight = document.getElementById('weight').value;
-    const height = document.getElementById('height').value / 100; // Convert cm to meters
+    const unit = getSelectedUnit();
+    const rawWeight = parseFloat(document.getElementById('weight').value);
+    const rawHeight = parseFloat(document.getElementById('height').value);
+    let bmi;
 
-    if (weight > 0 && height > 0) {
-        const bmi = (weight / (height * height)).toFixed(1);
+    if (unit === 'metric') {
+        const heightMeters = rawHeight / 100; // cm → m
+        if (rawWeight > 0 && heightMeters > 0) {
+            bmi = (rawWeight / (heightMeters * heightMeters)).toFixed(1);
+        }
+    } else {
+        // imperial: weight in lbs and height in inches
+        if (rawWeight > 0 && rawHeight > 0) {
+            bmi = ((703 * rawWeight) / (rawHeight * rawHeight)).toFixed(1);
+        }
+    }
+
+    if (bmi) {
         let category = "";
-        // included recommendation for workout
         let recommendation = "";
         const userGoal = document.getElementById('goal').value;
 
@@ -62,21 +100,21 @@ function calculateBMI() {
         else if (bmi < 29.9) category = "Overweight";
         else category = "Obese";
 
-        // recommendation based on bmi
         if (userGoal === "Lose weight") {
             recommendation = "Focus on high-intensity exercises to burn calories, specifically cardio.";
         } else if (userGoal === "Gain muscle") {
             recommendation = "Focus on heavy compound lifts (squats, deadlifts, bench press) with minimum weight and maximum weight.";
         } else if (userGoal === "Improve endurance") {
             recommendation = "Focus on cardio exercises and high reps on lifts with minimum weight.";
-        } else if (userGoal == "Maintain"){
+        } else if (userGoal === "Maintain") {
             recommendation = "2 days of light cardio with about 2-3 days of lift days";
         }
+
         document.getElementById('workout-recommendation').innerText = `Recommendation: ${recommendation}`;
 
-        let color = "#d65a6d"; // default color for under/over
+        let color = "#d65a6d";
         if (category === "Normal weight") {
-            color = "#32CD32"; // lime green for good
+            color = "#32CD32";
         }
 
         document.getElementById('bmi-result').innerText = `Your BMI is ${bmi} (${category})`;
@@ -87,8 +125,9 @@ function calculateBMI() {
             age: document.getElementById('age').value.trim(),
             gender: document.getElementById('gender').value,
             goal: document.getElementById('goal').value,
-            weight,
-            height: document.getElementById('height').value.trim(),
+            weight: rawWeight,
+            height: rawHeight,
+            unit,
             bmi,
             category,
             updatedAt: new Date().toISOString(),
