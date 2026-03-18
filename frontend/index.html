@@ -169,12 +169,19 @@
                 <section id="bmi-section" class="bmi-tool card" style="display: none;">
                     <h3>Quick Health Check</h3>
                     <p>Enter your details to tailor your workouts.</p>
+                    <p id="unit-note" class="inline-note">Unit: Metric (kg, cm)</p>
                     <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem;">
+                        <select id="goal">
+                            <option value="strength">Build Strength</option>
+                            <option value="cardio">Improve Cardio</option>
+                            <option value="endurance">Improve Endurance</option>
+                        </select>
                         <input type="number" id="weight" placeholder="Weight (kg)">
                         <input type="number" id="height" placeholder="Height (cm)">
                         <button onclick="calculateBMI()" class="btn" type="button">Calculate Now</button>
                     </div>
                     <p id="bmi-result" class="inline-note"></p>
+                    <p id="workout-recommendation" class="inline-note"></p>
                     <a href="dashboard.html" class="inline-note" style="display: inline-block;">Skip to Dashboard</a>
                 </section>
 

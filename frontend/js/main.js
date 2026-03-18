@@ -413,6 +413,11 @@ function applyUnitSettings() {
 function loadSavedProfile() {
     const saved = localStorage.getItem('sweatlogic-profile');
     if (!saved) {
+        const goalField = document.getElementById('goal');
+        const storedGoal = localStorage.getItem('goal');
+        if (goalField && storedGoal) {
+            goalField.value = storedGoal;
+        }
         return;
     }
 
@@ -487,11 +492,11 @@ function calculateBMI() {
         else if (bmi < 29.9) category = 'Overweight';
         else category = 'Obese';
 
-        if (userGoal === 'Lose weight') {
+        if (userGoal === 'Lose weight' || userGoal === 'cardio') {
             recommendation = 'Focus on higher-volume cardio and calorie-burning sessions.';
-        } else if (userGoal === 'Gain muscle') {
+        } else if (userGoal === 'Gain muscle' || userGoal === 'strength') {
             recommendation = 'Focus on compound lifts and progressive overload for strength gains.';
-        } else if (userGoal === 'Improve endurance') {
+        } else if (userGoal === 'Improve endurance' || userGoal === 'endurance') {
             recommendation = 'Prioritize steady-state cardio and higher-rep training blocks.';
         } else if (userGoal === 'Maintain') {
             recommendation = 'Balance lighter cardio days with a few consistent strength sessions.';

@@ -179,8 +179,8 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
-        User user = new User("demo_user", "imperial");
-        userRepository.save(user);
+        userRepository.findByUsername("demo_user")
+                .orElseGet(() -> userRepository.save(new User("demo_user", "imperial")));
 
         LocalDateTime now = LocalDateTime.now();
 
