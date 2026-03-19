@@ -2891,8 +2891,8 @@ form .btn {
 
 /* Generate card */
 .builder-card--generate {
-    background: linear-gradient(135deg, rgba(11, 143, 42, 0.06) 0%, #ffffff 60%);
-    border-color: rgba(11, 143, 42, 0.18);
+    background: var(--surface-strong);
+    border-color: var(--border);
 }
 
 .generate-summary {
