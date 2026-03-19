@@ -109,6 +109,10 @@ csce3444-sweat-logic/
 | **Map** | 2-floor interactive Rec Center map with clickable zones and occupancy badges |
 | **Dashboard** | Streak, weekly totals, and recent workout history |
 
+### Home Screenshot
+
+![SweatLogic home screen](screenshots/home-screen.png)
+
 
 
 ---
