@@ -3,7 +3,7 @@ const API_BASE = 'http://localhost:8080/api';
 const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionGroups = [
     {
-        selector: '.hero, .page-intro, .cta-band',
+        selector: '.hero, .page-intro, .cta-band, .workout-path-chooser, .builder-steps, .manual-log-card',
         animation: 'hero',
         step: 140,
     },
@@ -23,12 +23,12 @@ const motionGroups = [
         step: 100,
     },
     {
-        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .preview-card, .split-copy, form, .card',
+        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .preview-card, .split-copy, form, .card, .guided-builder .builder-card',
         animation: 'pop',
         step: 90,
     },
     {
-        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip, .workout-empty-state, .plan-summary-chip, .exercise-plan-item, .generated-plan-actions',
+        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip, .workout-empty-state, .plan-summary-chip, .exercise-plan-item, .generated-plan-actions, .path-card, .body-zone-card, .goal-option-btn, .level-option-btn, .duration-preset-btn, .manual-type-option',
         animation: 'slide-right',
         step: 80,
     },
@@ -121,7 +121,7 @@ function prepareAnimatedElements(root = document) {
 
             element.dataset.motionReady = 'true';
             element.setAttribute('data-animate', group.animation);
-            const scope = element.closest('.hero, .feature-grid, .split-panel, .stat-row, .dash-grid, .progress-grid, .settings-layout, .map-below, .quick-actions, .mini-metric-grid, .detail-grid') || element.parentElement || root;
+            const scope = element.closest('.hero, .feature-grid, .split-panel, .stat-row, .dash-grid, .progress-grid, .settings-layout, .map-below, .quick-actions, .mini-metric-grid, .detail-grid, .workout-path-chooser, .guided-builder, .goal-option-grid, .level-option-grid, .body-zone-cards, .manual-type-grid, .duration-preset-grid, .exercise-plan-list, .plan-summary-grid') || element.parentElement || root;
             const scopedItems = Array.from(scope.querySelectorAll(group.selector));
             const scopedIndex = scopedItems.indexOf(element) >= 0 ? scopedItems.indexOf(element) : index;
             const step = group.step || 85;
