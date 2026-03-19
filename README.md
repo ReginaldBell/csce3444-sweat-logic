@@ -1,92 +1,65 @@
-# Sweat Logic
+# SweatLogic
 
-> **Note:** This project is currently in the planning phase. Development has not yet started. See [Project Status](#project-status) below.
+Fitness tracker for UNT students. Log workouts, generate exercise plans, track progress, and navigate the UNT Rec Center — no account required.
 
-A web-based fitness tracker designed specifically for UNT students, featuring rule-based workout recommendations, progress tracking, and an interactive recreation center map. Built as part of CSCE 3444 Software Engineering.
+Built for CSCE 3444 Software Engineering at the University of North Texas.
 
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Status](#project-status)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Team](#team)
-- [Documentation](#documentation)
-- [Known Limitations](#known-limitations)
-- [License](#license)
-
-## Overview
-
-Sweat Logic helps UNT students maintain consistent fitness routines by providing structured workout guidance and progress tracking. The application generates daily workout recommendations from a curated exercise database based on user-selected target body parts, tracks workout completion, and displays a static interactive map of the UNT recreation center to help users locate equipment. Designed for UNT students at all fitness levels to promote consistency and accountability.
-
-## Features
-
-> **Note:** Feature details are derived from the approved SRS and may be refined during system design.
-
-#### Workout Management
-- Daily workout generation from predefined exercise database
-- Body part targeting (chest, legs, back, arms, core)
-- Workout customization and completion tracking
-
-#### Progress Tracking
-- Workout history calendar
-- Streak tracking and statistics
-- User-defined fitness goals
-
-#### Recreation Center Map
-- Interactive static floor plan of UNT recreation center
-- Labeled equipment zones and facility areas
-
-#### User Profile
-- Personal information and fitness goal configuration
-- Workout preference management
+---
 
 ## Tech Stack
 
-> **Note:** The following technologies represent the team's proposed stack based on current requirements.
-
-| Component | Technology |
-|-----------|-----------|
-| **Backend** | Java with Spring Boot |
-| **Frontend** | HTML, CSS, JavaScript |
-| **Database** | SQLite |
-| **IDE** | Visual Studio Code |
-| **Version Control** | Git & GitHub |
-| **Hosting** | Render |
-| **Modeling** | draw.io |
-
-## Project Status
-
-**Status:** Planning & Requirements  
-SRS completed. Design and development have not yet started.
+| Layer | Tech |
+|-------|------|
+| Backend | Java 17 + Spring Boot 3.2 |
+| Frontend | HTML5, CSS3, Vanilla JS (ES6+) |
+| Database | SQLite via Spring Data JPA |
+| Build | Maven |
 
 ## Getting Started
 
-Setup instructions will be added once development begins.
+**Prerequisites:** Java 17+, Maven 3.8+, modern browser
 
-## Project Structure
+```bash
+# Start backend
+cd backend
+mvn spring-boot:run
+# Server runs at http://localhost:8080
+# DB created automatically, seeded with 25 exercises on first run
+```
 
-Project structure will be finalized during the system design phase.
+Open `frontend/index.html` in your browser (or use VS Code Live Server).
+
+## Features
+
+- **Workout Planner** — generate plans by body part, goal, and experience level
+- **Manual Logging** — log workouts by type, duration, and notes
+- **Dashboard** — weekly stats, streak, and recent activity
+- **Progress** — totals, averages, and workout type breakdown
+- **Rec Center Map** — interactive 2-floor floor plan with 20+ clickable zones
+- **BMI Calculator** — imperial/metric with category and recommendation
+- **Settings** — display name and unit preference (localStorage)
+
+## API
+
+Base URL: `http://localhost:8080/api`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/workouts` | All workouts |
+| POST | `/workouts` | Log a workout |
+| PUT | `/workouts/{id}` | Update a workout |
+| DELETE | `/workouts/{id}` | Delete a workout |
+| GET | `/recommendations/generate/{bodyPart}` | Generate plan (`?goal=&level=`) |
+| GET | `/exercises` | Full exercise catalog |
 
 ## Team
 
-- Alejandro Castro
-- Cash Quigley
-- Demarcus Bell
-- Gerardo Martinez
-- Shalom Tanyi
+Alejandro Castro · Cash Quigley · Demarcus Bell · Gerardo Martinez · Shalom Tanyi
 
-## Documentation
+## Docs
 
-- [Software Requirements Specification (SRS)](docs/SRS_Group_13_Modified.docx) – Complete system requirements *(Click to download)*
+[SRS Document](docs/SRS_Group_13_Modified.docx)
 
-## Known Limitations
+---
 
-- Single-user demonstration mode (no persistent multi-user accounts)
-- Static recreation center map (no real-time positioning)
-- Rule-based exercise selection (no AI/ML recommendations)
-
-## License
-
-This project is developed as coursework for CSCE 3444 at the University of North Texas. Academic use only.
+*Academic use only — CSCE 3444, University of North Texas.*

@@ -22,3 +22,15 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Local runtime and scratch artifacts
+.tmp-srs/
+.tmp-srs.zip
+.run-logs/
+backend/target/
+backend/*.db
+*.db
+
+# Unused prototype frontend artifacts
+frontend-next/.next/
+frontend-next/node_modules/

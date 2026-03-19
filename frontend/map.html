@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
+    <link rel="stylesheet" href="css/styles.css?v=6">
+    <link rel="stylesheet" href="css/map.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="page-map">
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a class="is-active" href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="workout.html">Plan Workout</a>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Facility Guide</div>
+                <h2 class="page-title">UNT Rec Center <span class="gradient-text">Navigator</span></h2>
+                <p class="page-lead">Explore the UNT Recreation Center layout, find equipment zones, and plan your visit. Click any zone for details.</p>
+            </section>
+
+            <!-- ── Map app ───────────────────────────────────────────────── -->
+            <div class="map-app">
+                <div class="map-surface" id="map-surface">
+
+                    <!-- Floor switcher -->
+                    <div class="floor-switcher">
+                        <button class="floor-btn active" data-floor="1">Main Floor</button>
+                        <button class="floor-btn"        data-floor="2">2nd Floor</button>
+                    </div>
+
+                    <!-- Zone grid — populated by renderMap() -->
+                    <div class="map-grid" id="map-grid"></div>
+
+                    <!-- Side panel — populated by renderPanel() -->
+                    <aside class="side-panel" id="side-panel" aria-label="Zone details">
+                        <div class="panel-inner">
+                            <button class="panel-close" id="panel-close" aria-label="Close panel">&times;</button>
+                            <div id="panel-content"></div>
+                        </div>
+                    </aside>
+
+                </div><!-- /.map-surface -->
+            </div><!-- /.map-app -->
+
+            <!-- Tooltip — positioned by renderTooltip() -->
+            <div class="map-tooltip" id="map-tooltip" aria-hidden="true"></div>
+
+            <!-- ── Info cards below the map ─────────────────────────────── -->
+            <div class="map-below">
+                <div class="map-info-card">
+                    <h4>Zone Groups</h4>
+                    <ul class="legend-list">
+                        <li><span class="legend-dot green"></span> Fitness</li>
+                        <li><span class="legend-dot blue"></span> Aquatics</li>
+                        <li><span class="legend-dot courts"></span> Courts</li>
+                        <li><span class="legend-dot orange"></span> Recreation</li>
+                        <li><span class="legend-dot services"></span> Services</li>
+                    </ul>
+                </div>
+
+                <div class="map-info-card">
+                    <h4>Key Locations</h4>
+                    <ul class="legend-list numbered-legend">
+                        <li><span class="legend-number">1</span> Member Services</li>
+                        <li><span class="legend-number">2</span> Rec Sports Office</li>
+                        <li><span class="legend-number">3</span> Backyard</li>
+                        <li><span class="legend-number">4</span> Fitness Office</li>
+                        <li><span class="legend-number">5</span> PointBank Lounge</li>
+                    </ul>
+                </div>
+
+                <div class="map-info-card">
+                    <h4>Building Hours</h4>
+                    <ul class="hours-list">
+                        <li><span>Mon – Fri</span><span>6:00 AM – 11:00 PM</span></li>
+                        <li><span>Saturday</span><span>8:00 AM – 9:00 PM</span></li>
+                        <li><span>Sunday</span><span>10:00 AM – 9:00 PM</span></li>
+                        <li><span>Holidays</span><span>Hours may vary</span></li>
+                    </ul>
+                </div>
+
+                <div class="map-info-card">
+                    <h4>Tips &amp; Info</h4>
+                    <div class="map-tip">
+                        <strong>Peak Hours</strong>
+                        <span>4 PM – 7 PM weekdays. Mornings before 9 AM are typically less busy.</span>
+                    </div>
+                    <div class="map-tip">
+                        <strong>Lockers</strong>
+                        <span>Day-use lockers near the entrance. Bring your own lock.</span>
+                    </div>
+                    <div class="map-tip">
+                        <strong>Occupancy Badges</strong>
+                        <span>Zone status is estimated — not live data.</span>
+                    </div>
+                </div>
+            </div><!-- /.map-below -->
+
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Map interactions are static and informational — not real-time.</p>
+            </div>
+        </footer>
+    </div><!-- /.site-shell -->
+
+    <!-- ── Module bootstrap ──────────────────────────────────────────────── -->
+    <script type="module">
+        import { seedStatus, loadSavedReports } from './js/map/simulate.js';
+        import { render }                       from './js/map/render.js';
+        import { attachEvents }                 from './js/map/events.js';
+        import { registerRender }               from './js/map/state.js';
+
+        registerRender(render);  // wire setState → render before first paint
+        seedStatus();             // assign random estimates to every zone
+        loadSavedReports();       // override with any user-saved reports (< 4h old)
+        attachEvents();           // wire all DOM listeners
+        render();                 // initial paint
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
