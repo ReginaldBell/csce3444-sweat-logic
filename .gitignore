@@ -34,3 +34,6 @@ backend/*.db
 # Unused prototype frontend artifacts
 frontend-next/.next/
 frontend-next/node_modules/
+
+# Local-only prompt documents
+docs/prompts/
