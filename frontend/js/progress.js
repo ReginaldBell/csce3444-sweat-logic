@@ -130,10 +130,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // ── Planned days — localStorage persistence ─────────────────────
+    const PLANNED_DAYS_KEY = 'sweatlogic-planned-days';
+
+    function loadPlannedDays() {
+        try {
+            return new Set(JSON.parse(localStorage.getItem(PLANNED_DAYS_KEY) || '[]'));
+        } catch {
+            return new Set();
+        }
+    }
+
+    function savePlannedDays(set) {
+        localStorage.setItem(PLANNED_DAYS_KEY, JSON.stringify([...set]));
+    }
+
     // ── Activity heatmap ────────────────────────────────────────────
     function renderHeatmap(workouts) {
         const grid = document.getElementById('heatmap-grid');
         if (!grid) return;
+
+        const plannedDays = loadPlannedDays();
 
         // Build date → count map
         const dayCounts = {};
@@ -142,9 +159,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (key) dayCounts[key] = (dayCounts[key] || 0) + 1;
         });
 
-        // Determine range: oldest workout date to today
+        // Determine range: oldest workout date to 4 weeks from today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        const todayKey  = today.toISOString().slice(0, 10);
+        const futureEnd = new Date(today.getTime() + 4 * 7 * 86400000);
+
         const dates = Object.keys(dayCounts).sort();
         const startDate = dates.length > 0 ? new Date(dates[0]) : new Date(today.getTime() - 12 * 7 * 86400000);
         startDate.setHours(0, 0, 0, 0);
@@ -153,9 +173,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const startDay = (startDate.getDay() + 6) % 7; // 0=Mon
         startDate.setDate(startDate.getDate() - startDay);
 
-        // Build full list of days from startDate to today
+        // Build full list of days from startDate to futureEnd
         const days = [];
-        for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+        for (let d = new Date(startDate); d <= futureEnd; d.setDate(d.getDate() + 1)) {
             days.push(new Date(d));
         }
 
@@ -175,7 +195,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         for (let w = 0; w < numWeeks; w++) {
             const weekStart = days[w * 7];
             const span = document.createElement('span');
-            // Show label every 2 weeks to avoid crowding
             if (w % 2 === 0) {
                 span.textContent = getISOWeekLabel(weekStart.toISOString().slice(0, 10));
             }
@@ -195,15 +214,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             rowEl.appendChild(dayLabel);
 
             for (let col = 0; col < numWeeks; col++) {
-                const day = days[col * 7 + row];
-                const key = day.toISOString().slice(0, 10);
-                const count = dayCounts[key] || 0;
+                const day  = days[col * 7 + row];
+                const key  = day.toISOString().slice(0, 10);
+                const count    = dayCounts[key] || 0;
+                const isFuture = key > todayKey;
+                const isPlanned = isFuture && plannedDays.has(key);
                 const level = count === 0 ? 0 : Math.ceil((count / maxCount) * 4);
 
                 const cell = document.createElement('span');
                 cell.className = 'heatmap-cell';
                 cell.dataset.level = level;
-                cell.title = `${key}: ${count} workout${count !== 1 ? 's' : ''}`;
+                cell.dataset.date  = key;
+
+                if (isFuture) {
+                    cell.dataset.future = 'true';
+                    if (isPlanned) cell.dataset.planned = 'true';
+                    cell.title = isPlanned
+                        ? `${key}: Planned workout — click to unplan`
+                        : `${key}: Click to plan a workout`;
+
+                    cell.addEventListener('click', () => {
+                        const fresh = loadPlannedDays();
+                        if (fresh.has(key)) {
+                            fresh.delete(key);
+                            delete cell.dataset.planned;
+                            cell.title = `${key}: Click to plan a workout`;
+                        } else {
+                            fresh.add(key);
+                            cell.dataset.planned = 'true';
+                            cell.title = `${key}: Planned workout — click to unplan`;
+                        }
+                        savePlannedDays(fresh);
+                    });
+                } else {
+                    cell.title = `${key}: ${count} workout${count !== 1 ? 's' : ''}`;
+                }
+
                 rowEl.appendChild(cell);
             }
             grid.appendChild(rowEl);

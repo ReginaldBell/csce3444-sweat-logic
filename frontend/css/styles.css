@@ -4743,6 +4743,28 @@ form .btn {
 .heatmap-cell[data-level="3"] { background: rgba(11,143,42,0.75); }
 .heatmap-cell[data-level="4"] { background: var(--green); }
 
+/* Future days — clickable */
+.heatmap-cell[data-future="true"] {
+    cursor: pointer;
+    background: rgba(16, 32, 51, 0.04);
+    border: 1px dashed rgba(16, 32, 51, 0.15);
+}
+
+.heatmap-cell[data-future="true"]:hover {
+    background: rgba(11, 143, 42, 0.10);
+    border-color: rgba(11, 143, 42, 0.35);
+}
+
+/* Planned future day */
+.heatmap-cell[data-planned="true"] {
+    background: rgba(11, 143, 42, 0.08);
+    border: 2px solid var(--green);
+}
+
+.heatmap-cell[data-planned="true"]:hover {
+    background: rgba(11, 143, 42, 0.18);
+}
+
 .heatmap-legend {
     display: flex;
     align-items: center;
