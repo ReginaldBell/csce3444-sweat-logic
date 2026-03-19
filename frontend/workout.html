@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="page-workout state-idle">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -31,22 +31,93 @@
             <section class="page-intro">
                 <div class="eyebrow">Workout Planner</div>
                 <h2 class="page-title">Plan & Log <span class="gradient-text">Your Session</span></h2>
-                <p class="page-lead">Set up your workout details on the left, then review your session info on the right. Every logged session feeds your dashboard and progress.</p>
+                <p class="page-lead">Choose how you want to train. Build a guided workout using our recommendation engine, or log a session you already completed.</p>
             </section>
 
-            <div class="workout-split">
-                <!-- Left: Form Controls -->
-                <form id="workout-form">
-                    <div class="form-section recommendation-builder">
-                        <div class="form-section-title">Recommendation Builder</div>
-                        <label>Target Body Part</label>
-                        <div class="body-part-selector" id="body-part-selector" role="group" aria-label="Select a body part">
-                            <button type="button" class="body-part-btn" data-part="chest">Chest</button>
-                            <button type="button" class="body-part-btn" data-part="back">Back</button>
-                            <button type="button" class="body-part-btn" data-part="legs">Legs</button>
-                            <button type="button" class="body-part-btn" data-part="arms">Arms</button>
-                            <button type="button" class="body-part-btn" data-part="core">Core</button>
+            <!-- Path chooser -->
+            <div class="workout-path-chooser" id="path-chooser">
+                <button class="path-card path-card--guided" data-path="guided" type="button">
+                    <span class="path-card-icon" aria-hidden="true">
+                        <!-- Lucide: dumbbell -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/>
+                            <path d="M3 9.5V14.5"/><path d="M21 9.5V14.5"/>
+                            <path d="M5 7.5v9"/><path d="M19 7.5v9"/>
+                            <rect x="5" y="6" width="1.5" height="12" rx="0.75"/>
+                            <rect x="17.5" y="6" width="1.5" height="12" rx="0.75"/>
+                            <rect x="2" y="9" width="3" height="6" rx="1"/>
+                            <rect x="19" y="9" width="3" height="6" rx="1"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                    </span>
+                    <span class="path-card-label">Start a Session</span>
+                    <span class="path-card-desc">Pick a body part, goal, and level — we'll generate a personalized plan and guide you through it.</span>
+                </button>
+                <button class="path-card path-card--manual" data-path="manual" type="button">
+                    <span class="path-card-icon" aria-hidden="true">
+                        <!-- Lucide: clipboard-list -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                            <path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>
+                        </svg>
+                    </span>
+                    <span class="path-card-label">Log a Session Manually</span>
+                    <span class="path-card-desc">Already finished? Log your workout type and duration.</span>
+                </button>
+            </div>
+
+            <!-- ===================== GUIDED PATH ===================== -->
+            <div class="workout-view-panel" id="guided-path" hidden>
+
+                <!-- Compact session header — visible while a guided session is active -->
+                <div class="guided-session-header" id="guided-session-header" hidden>
+                    <div class="guided-session-header-inner">
+                        <span class="session-status-badge" id="session-status-badge" data-status="ready">Ready</span>
+                        <div class="session-header-chips" id="session-header-chips"></div>
+                        <button type="button" class="session-discard-btn" id="session-discard-btn">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Discard Session
+                        </button>
+                    </div>
+                </div>
+
+                <div class="workout-split" id="guided-split">
+                <!-- Left: Builder -->
+                <div class="guided-builder">
+
+                    <!-- Step progress indicator -->
+                    <div class="builder-steps" id="builder-steps">
+                        <div class="builder-step is-active" data-step="1">
+                            <span class="step-num">1</span>
+                            <span class="step-label">Body Part</span>
                         </div>
+                        <span class="step-connector" aria-hidden="true"></span>
+                        <div class="builder-step" data-step="2">
+                            <span class="step-num">2</span>
+                            <span class="step-label">Goal</span>
+                        </div>
+                        <span class="step-connector" aria-hidden="true"></span>
+                        <div class="builder-step" data-step="3">
+                            <span class="step-num">3</span>
+                            <span class="step-label">Level</span>
+                        </div>
+                        <span class="step-connector" aria-hidden="true"></span>
+                        <div class="builder-step" data-step="4">
+                            <span class="step-num">4</span>
+                            <span class="step-label">Generate</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Body map -->
+                    <div class="builder-card" id="step-body-part">
+                        <div class="builder-card-header">
+                            <span class="builder-card-eyebrow">Step 1</span>
+                            <h3 class="builder-card-title">Select a Target Zone</h3>
+                            <p class="builder-card-desc">Tap the area you want to train today.</p>
+                        </div>
+
+                        <!-- Hidden select keeps the API contract intact -->
                         <select id="recommend-body-part" style="display:none" aria-hidden="true">
                             <option value="chest">Chest</option>
                             <option value="back">Back</option>
@@ -54,80 +125,355 @@
                             <option value="arms">Arms</option>
                             <option value="core">Core</option>
                         </select>
-                        <div class="form-row">
-                            <div>
-                                <label for="recommend-goal">Goal</label>
-                                <select id="recommend-goal">
-                                    <option value="strength">Strength</option>
-                                    <option value="cardio">Cardio</option>
-                                    <option value="endurance">Endurance</option>
-                                </select>
-                            </div>
+
+                        <div class="body-map-container" id="body-part-selector" role="group" aria-label="Select a body part">
+                            <svg class="body-map-svg" viewBox="0 0 160 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="bodyDepth" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%"   stop-color="rgba(0,0,0,0.10)"/>
+                                        <stop offset="45%"  stop-color="rgba(255,255,255,0.06)"/>
+                                        <stop offset="100%" stop-color="rgba(0,0,0,0.10)"/>
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- ══════════════════════════════════
+                                     BODY SILHOUETTE (base layer)
+                                ══════════════════════════════════ -->
+
+                                <!-- Head -->
+                                <ellipse cx="80" cy="25" rx="17" ry="20" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.4"/>
+                                <ellipse cx="63.5" cy="26" rx="2.2" ry="4" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1"/>
+                                <ellipse cx="96.5" cy="26" rx="2.2" ry="4" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1"/>
+                                <path d="M68 37 Q80 47 92 37" stroke="var(--body-stroke)" stroke-width="0.8" opacity="0.3"/>
+
+                                <!-- Neck -->
+                                <path d="M75 44 L75 58 Q78 60 80 60 Q82 60 85 58 L85 44 Q82 42 80 42 Q78 42 75 44 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+
+                                <!-- Torso -->
+                                <path d="M75 58 Q63 58 49 67 Q40 73 38 84 Q37 97 41 111 Q45 122 50 130 Q53 138 55 153 L105 153 Q107 138 110 130 Q115 122 119 111 Q123 97 122 84 Q120 73 111 67 Q97 58 85 58 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.4"/>
+                                <path d="M49 67 Q40 73 38 84 Q37 97 41 111 Q45 122 50 130 Q53 138 55 153 L105 153 Q107 138 110 130 Q115 122 119 111 Q123 97 122 84 Q120 73 111 67 Q97 58 85 58 L75 58 Q63 58 49 67 Z" fill="url(#bodyDepth)" opacity="0.5"/>
+
+                                <!-- Left arm -->
+                                <path d="M40 69 Q32 73 29 85 Q27 98 28 112 Q29 122 33 129 Q37 131 41 129 Q45 122 46 112 Q47 98 45 85 Q43 73 40 69 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M33 129 Q29 137 29 150 Q29 163 31 171 Q33 176 37 176 Q41 176 43 171 Q45 163 45 150 Q45 137 41 129 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+
+                                <!-- Right arm -->
+                                <path d="M120 69 Q128 73 131 85 Q133 98 132 112 Q131 122 127 129 Q123 131 119 129 Q115 122 114 112 Q113 98 115 85 Q117 73 120 69 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M127 129 Q131 137 131 150 Q131 163 129 171 Q127 176 123 176 Q119 176 117 171 Q115 163 115 150 Q115 137 119 129 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+
+                                <!-- Left leg -->
+                                <path d="M55 153 Q50 158 50 170 Q50 192 52 210 Q54 221 59 224 Q63 226 67 224 Q72 221 74 210 Q76 192 76 170 Q76 158 71 153 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M59 224 Q54 233 54 248 Q54 264 56 273 Q58 280 63 281 Q67 282 70 281 Q74 278 75 273 Q77 264 76 248 Q75 233 67 224 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M56 281 Q50 283 47 287 Q45 292 52 294 Q59 296 70 295 Q76 293 76 288 L76 281 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.2"/>
+
+                                <!-- Right leg -->
+                                <path d="M105 153 Q110 158 110 170 Q110 192 108 210 Q106 221 101 224 Q97 226 93 224 Q88 221 86 210 Q84 192 84 170 Q84 158 89 153 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M101 224 Q106 233 106 248 Q106 264 104 273 Q102 280 97 281 Q93 282 90 281 Q86 278 85 273 Q83 264 84 248 Q85 233 93 224 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.3"/>
+                                <path d="M104 281 Q110 283 113 287 Q115 292 108 294 Q101 296 90 295 Q84 293 84 288 L84 281 Z" fill="var(--body-fill)" stroke="var(--body-stroke)" stroke-width="1.2"/>
+
+                                <!-- ══════════════════════════════════
+                                     MUSCLE GROUPS (interactive layer)
+                                     Each <g> has data-muscle matching
+                                     the body-zone data-part values.
+                                ══════════════════════════════════ -->
+
+                                <!-- ── CHEST ── -->
+                                <g class="muscle-group" data-muscle="chest">
+                                    <!-- Left pectoralis major -->
+                                    <path class="muscle-path" d="M79 68 Q70 70 61 75 Q55 82 56 92 Q57 101 65 105 Q72 107 79 104 Z"/>
+                                    <!-- Right pectoralis major -->
+                                    <path class="muscle-path" d="M81 68 Q90 70 99 75 Q105 82 104 92 Q103 101 95 105 Q88 107 81 104 Z"/>
+                                    <!-- Clavicle line left -->
+                                    <path class="muscle-detail" d="M75 62 Q62 65 50 71" stroke-width="1.1" fill="none"/>
+                                    <!-- Clavicle line right -->
+                                    <path class="muscle-detail" d="M85 62 Q98 65 110 71" stroke-width="1.1" fill="none"/>
+                                    <!-- Pec arch -->
+                                    <path class="muscle-detail" d="M74 80 Q80 86 86 80" stroke-width="1" fill="none"/>
+                                </g>
+
+                                <!-- ── CORE (abs + obliques) ── -->
+                                <g class="muscle-group" data-muscle="core">
+                                    <!-- Left oblique -->
+                                    <path class="muscle-path" d="M56 92 Q55 106 56 120 Q57 132 62 141 Q65 144 67 144 L67 107 Q62 103 56 92 Z"/>
+                                    <!-- Right oblique -->
+                                    <path class="muscle-path" d="M104 92 Q105 106 104 120 Q103 132 98 141 Q95 144 93 144 L93 107 Q98 103 104 92 Z"/>
+                                    <!-- Rectus abdominis — 6 blocks -->
+                                    <rect class="muscle-path" x="67.5" y="106" width="11" height="10" rx="2"/>
+                                    <rect class="muscle-path" x="81.5" y="106" width="11" height="10" rx="2"/>
+                                    <rect class="muscle-path" x="66.5" y="119" width="12" height="10" rx="2"/>
+                                    <rect class="muscle-path" x="81.5" y="119" width="12" height="10" rx="2"/>
+                                    <rect class="muscle-path" x="66"   y="132" width="12" height="10" rx="2"/>
+                                    <rect class="muscle-path" x="82"   y="132" width="12" height="10" rx="2"/>
+                                    <!-- Linea alba -->
+                                    <line class="muscle-detail" x1="80" y1="104" x2="80" y2="144" stroke-width="0.9"/>
+                                </g>
+
+                                <!-- ── ARMS (deltoids + biceps + forearms) ── -->
+                                <g class="muscle-group" data-muscle="arms">
+                                    <!-- Left deltoid -->
+                                    <path class="muscle-path" d="M41 64 Q47 61 53 65 Q57 71 55 81 Q51 85 45 83 Q38 80 38 72 Z"/>
+                                    <!-- Left bicep -->
+                                    <path class="muscle-path" d="M31 87 Q29 97 30 111 Q31 120 36 121 Q42 121 45 119 Q47 110 46 97 Q45 87 39 85 Z"/>
+                                    <!-- Left forearm -->
+                                    <path class="muscle-path" d="M33 131 Q29 143 30 157 Q31 170 36 174 Q41 174 44 170 Q46 155 45 143 Q44 131 38 130 Z"/>
+                                    <!-- Right deltoid -->
+                                    <path class="muscle-path" d="M119 64 Q113 61 107 65 Q103 71 105 81 Q109 85 115 83 Q122 80 122 72 Z"/>
+                                    <!-- Right bicep -->
+                                    <path class="muscle-path" d="M129 87 Q131 97 130 111 Q129 120 124 121 Q118 121 115 119 Q113 110 114 97 Q115 87 121 85 Z"/>
+                                    <!-- Right forearm -->
+                                    <path class="muscle-path" d="M127 131 Q131 143 130 157 Q129 170 124 174 Q119 174 116 170 Q114 155 115 143 Q116 131 122 130 Z"/>
+                                    <!-- Bicep peak lines -->
+                                    <path class="muscle-detail" d="M29 95 Q37 100 45 95" stroke-width="0.9" fill="none"/>
+                                    <path class="muscle-detail" d="M131 95 Q123 100 115 95" stroke-width="0.9" fill="none"/>
+                                </g>
+
+                                <!-- ── LEGS (quads + calves) ── -->
+                                <g class="muscle-group" data-muscle="legs">
+                                    <!-- Left quad -->
+                                    <path class="muscle-path" d="M52 156 Q50 168 50 182 Q50 204 53 215 Q56 223 63 224 Q69 224 73 220 Q76 210 75 194 Q75 174 72 162 Q70 156 63 155 Z"/>
+                                    <!-- Right quad -->
+                                    <path class="muscle-path" d="M108 156 Q110 168 110 182 Q110 204 107 215 Q104 223 97 224 Q91 224 87 220 Q84 210 85 194 Q85 174 88 162 Q90 156 97 155 Z"/>
+                                    <!-- Left calf/tibialis -->
+                                    <path class="muscle-path" d="M59 225 Q55 238 55 252 Q55 268 58 277 Q60 281 65 281 Q69 281 72 277 Q75 268 75 252 Q75 238 72 225 Z"/>
+                                    <!-- Right calf/tibialis -->
+                                    <path class="muscle-path" d="M101 225 Q105 238 105 252 Q105 268 102 277 Q100 281 95 281 Q91 281 88 277 Q85 268 85 252 Q85 238 88 225 Z"/>
+                                    <!-- Quad separation lines -->
+                                    <path class="muscle-detail" d="M51 180 Q63 185 75 180" stroke-width="0.85" fill="none"/>
+                                    <path class="muscle-detail" d="M109 180 Q97 185 85 180" stroke-width="0.85" fill="none"/>
+                                    <!-- Calf peak lines -->
+                                    <path class="muscle-detail" d="M55 245 Q65 252 75 245" stroke-width="0.85" fill="none"/>
+                                    <path class="muscle-detail" d="M105 245 Q95 252 85 245" stroke-width="0.85" fill="none"/>
+                                </g>
+
+                                <!-- ── BACK (trapezius visible from front) ── -->
+                                <g class="muscle-group" data-muscle="back">
+                                    <!-- Left trapezius (neck-to-shoulder visible from front) -->
+                                    <path class="muscle-path" d="M75 59 Q68 60 62 64 Q56 70 54 79 Q57 85 63 83 Q69 79 73 71 Q75 65 75 59 Z"/>
+                                    <!-- Right trapezius -->
+                                    <path class="muscle-path" d="M85 59 Q92 60 98 64 Q104 70 106 79 Q103 85 97 83 Q91 79 87 71 Q85 65 85 59 Z"/>
+                                    <!-- Lat visible line (serratus / lat edge) -->
+                                    <path class="muscle-path" d="M38 85 Q41 96 43 110 Q45 120 46 126 Q43 118 40 108 Q37 96 38 85 Z" opacity="0.6"/>
+                                    <path class="muscle-path" d="M122 85 Q119 96 117 110 Q115 120 114 126 Q117 118 120 108 Q123 96 122 85 Z" opacity="0.6"/>
+                                </g>
+                            </svg>
+
+                            <!-- Clickable overlay zones -->
+                            <button class="body-zone" data-part="chest" aria-pressed="false" style="top:17%;left:30%;width:40%;height:19%;">
+                                <span class="body-zone-label">Chest</span>
+                            </button>
+                            <button class="body-zone" data-part="core" aria-pressed="false" style="top:36%;left:32%;width:36%;height:14%;">
+                                <span class="body-zone-label">Core</span>
+                            </button>
+                            <button class="body-zone" data-part="arms" aria-pressed="false" style="top:17%;left:5%;width:18%;height:28%;">
+                                <span class="body-zone-label">Arms</span>
+                            </button>
+                            <button class="body-zone body-zone--right" data-part="arms" aria-pressed="false" style="top:17%;left:77%;width:18%;height:28%;" aria-label="Arms (right)" tabindex="-1">
+                                <span class="body-zone-label" aria-hidden="true">Arms</span>
+                            </button>
+                            <button class="body-zone" data-part="legs" aria-pressed="false" style="top:52%;left:30%;width:40%;height:35%;">
+                                <span class="body-zone-label">Legs</span>
+                            </button>
+                            <button class="body-zone body-zone--back-trigger" data-part="back" aria-pressed="false" style="top:17%;left:0%;width:8%;height:10%;" aria-label="Back muscle group">
+                                <span class="body-zone-label" aria-hidden="true">Back</span>
+                            </button>
                         </div>
-                        <label for="recommend-level">Experience Level</label>
-                        <select id="recommend-level">
+
+                        <!-- Zone label cards below the map -->
+                        <div class="body-zone-cards" id="body-zone-cards" role="group" aria-label="Body part quick-select">
+                            <button class="body-zone-card" data-part="chest" type="button" aria-pressed="false">Chest</button>
+                            <button class="body-zone-card" data-part="back" type="button" aria-pressed="false">Back</button>
+                            <button class="body-zone-card" data-part="legs" type="button" aria-pressed="false">Legs</button>
+                            <button class="body-zone-card" data-part="arms" type="button" aria-pressed="false">Arms</button>
+                            <button class="body-zone-card" data-part="core" type="button" aria-pressed="false">Core</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Goal (hidden until body part chosen) -->
+                    <div class="builder-card builder-card--step" id="step-goal" hidden>
+                        <div class="builder-card-header">
+                            <span class="builder-card-eyebrow">Step 2</span>
+                            <h3 class="builder-card-title">Choose Your Goal</h3>
+                        </div>
+                        <p id="goal-restriction-note" class="builder-restriction-note" hidden></p>
+                        <div class="goal-option-grid" id="goal-option-grid" role="group" aria-label="Select a goal">
+                            <button class="goal-option-btn" data-goal="strength" type="button" aria-pressed="false">
+                                <span class="goal-option-icon" aria-hidden="true">
+                                    <!-- Lucide: dumbbell -->
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/>
+                                        <rect x="4.5" y="5.5" width="2" height="13" rx="1"/>
+                                        <rect x="17.5" y="5.5" width="2" height="13" rx="1"/>
+                                        <rect x="1.5" y="8.5" width="3" height="7" rx="1"/>
+                                        <rect x="19.5" y="8.5" width="3" height="7" rx="1"/>
+                                        <line x1="8" y1="12" x2="16" y2="12"/>
+                                    </svg>
+                                </span>
+                                <span class="goal-option-name">Strength</span>
+                                <span class="goal-option-desc">Build muscle &amp; power</span>
+                            </button>
+                            <button class="goal-option-btn" data-goal="cardio" type="button" aria-pressed="false">
+                                <span class="goal-option-icon" aria-hidden="true">
+                                    <!-- Lucide: heart-pulse -->
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                                        <path d="M3.22 12H9.5l1.5-4.5 2 9 1.5-4.5H21"/>
+                                    </svg>
+                                </span>
+                                <span class="goal-option-name">Cardio</span>
+                                <span class="goal-option-desc">Heart rate &amp; fat burn</span>
+                            </button>
+                            <button class="goal-option-btn" data-goal="endurance" type="button" aria-pressed="false">
+                                <span class="goal-option-icon" aria-hidden="true">
+                                    <!-- Lucide: activity -->
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                                    </svg>
+                                </span>
+                                <span class="goal-option-name">Endurance</span>
+                                <span class="goal-option-desc">Stamina over time</span>
+                            </button>
+                        </div>
+                        <!-- Hidden select keeps API contract -->
+                        <select id="recommend-goal" style="display:none" aria-hidden="true">
+                            <option value="strength">Strength</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="endurance">Endurance</option>
+                        </select>
+                    </div>
+
+                    <!-- Step 3: Level (hidden until goal chosen) -->
+                    <div class="builder-card builder-card--step" id="step-level" hidden>
+                        <div class="builder-card-header">
+                            <span class="builder-card-eyebrow">Step 3</span>
+                            <h3 class="builder-card-title">Your Experience Level</h3>
+                        </div>
+                        <div class="level-option-grid" id="level-option-grid" role="group" aria-label="Select experience level">
+                            <button class="level-option-btn" data-level="beginner" type="button" aria-pressed="false">
+                                <span class="level-option-name">Beginner</span>
+                                <span class="level-option-desc">New to training or returning</span>
+                            </button>
+                            <button class="level-option-btn is-active" data-level="intermediate" type="button" aria-pressed="true">
+                                <span class="level-option-name">Intermediate</span>
+                                <span class="level-option-desc">6+ months of consistent training</span>
+                            </button>
+                            <button class="level-option-btn" data-level="advanced" type="button" aria-pressed="false">
+                                <span class="level-option-name">Advanced</span>
+                                <span class="level-option-desc">2+ years, training seriously</span>
+                            </button>
+                        </div>
+                        <!-- Hidden select keeps API contract -->
+                        <select id="recommend-level" style="display:none" aria-hidden="true">
                             <option value="beginner">Beginner</option>
                             <option value="intermediate" selected>Intermediate</option>
                             <option value="advanced">Advanced</option>
                         </select>
-                        <div class="builder-actions">
-                            <button type="button" class="btn" id="generate-plan-btn">Generate Plan</button>
-                            <p class="builder-note">Pulls a live workout plan from the recommendation API using your current selections.</p>
+                    </div>
+
+                    <!-- Step 4: Generate (hidden until level chosen) -->
+                    <div class="builder-card builder-card--step builder-card--generate" id="step-generate" hidden>
+                        <div class="builder-card-header">
+                            <span class="builder-card-eyebrow">Step 4</span>
+                            <h3 class="builder-card-title">Ready to Build</h3>
                         </div>
+                        <div class="generate-summary" id="generate-summary">
+                            <!-- Chips filled by JS -->
+                        </div>
+                        <button type="button" class="btn btn--generate" id="generate-plan-btn">Generate Workout Plan</button>
                         <p id="recommendation-status" class="save-status" aria-live="polite"></p>
                     </div>
+                </div>
 
-                    <div class="form-section">
-                        <div class="form-section-title">Quick Manual Log</div>
-                        <div class="form-row">
-                            <div>
-                                <label for="workout-type">Type</label>
-                                <select id="workout-type" name="type">
-                                    <option value="running">Running</option>
-                                    <option value="cycling">Cycling</option>
-                                    <option value="weights">Weights</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="duration">Duration (min)</label>
-                                <input type="number" id="duration" name="duration" min="1" required placeholder="e.g. 45">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="form-section-title">Session Notes</div>
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" name="notes" rows="4" placeholder="How did it go? Any highlights or goals hit?"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn">Save Workout</button>
-                </form>
-
-                <!-- Right: Output / Preview Panel -->
+                <!-- Right: Output / Session builder -->
                 <div class="workout-output-panel">
-                    <h3 id="plan-output-title">Recommended Session</h3>
-                    <p id="plan-output-copy">Generate a plan on the left to see live exercises here, or keep using the manual logger for running, cycling, weights, and other workouts.</p>
+                    <h3 id="plan-output-title">Your Session</h3>
+                    <p id="plan-output-copy">Complete the steps on the left to generate your personalized workout plan.</p>
 
                     <div id="workout-empty-state" class="workout-empty-state">
+                        <span class="empty-state-icon" aria-hidden="true">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+                                <path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <strong>No plan generated yet</strong>
                         <span>Choose a body part, goal, and level to build a workout plan with real exercise details.</span>
                     </div>
 
                     <div id="generated-plan-panel" class="generated-plan-panel" hidden>
+
+                        <!-- Live workout timer -->
+                        <div class="session-timer" id="session-timer">
+                            <div class="timer-display" id="timer-display">00:00</div>
+                            <div class="timer-controls">
+                                <button type="button" id="timer-start-btn" class="timer-btn timer-btn--start">
+                                    <!-- play icon -->
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Start Workout
+                                </button>
+                                <button type="button" id="timer-pause-btn" class="timer-btn timer-btn--pause" hidden>
+                                    <!-- pause icon -->
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                    Pause
+                                </button>
+                                <button type="button" id="timer-resume-btn" class="timer-btn timer-btn--start" hidden>
+                                    <!-- play icon -->
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Resume
+                                </button>
+                                <button type="button" id="session-complete-btn" class="timer-btn timer-btn--complete" hidden disabled>
+                                    <!-- check icon -->
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Complete Session
+                                </button>
+                            </div>
+                            <div class="timer-progress-row">
+                                <div class="timer-progress" id="timer-progress"></div>
+                                <span id="timer-progress-label">0 / 0</span>
+                            </div>
+                        </div>
+
                         <div class="plan-summary-grid" id="plan-summary-grid"></div>
+
+                        <!-- Current exercise spotlight — shown during active session -->
+                        <div id="current-exercise-spotlight" aria-live="polite">
+                            <div class="spotlight-label">Current Exercise</div>
+                            <p class="spotlight-name" id="spotlight-name"></p>
+                            <p class="spotlight-meta" id="spotlight-meta"></p>
+                            <p class="spotlight-instructions" id="spotlight-instructions"></p>
+                            <button type="button" class="spotlight-complete-btn" id="spotlight-complete-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                Complete This Exercise
+                            </button>
+                            <p class="spotlight-next" id="spotlight-next"></p>
+                        </div>
+
                         <div class="exercise-plan-list" id="exercise-plan-list"></div>
 
-                        <div class="generated-plan-actions">
-                            <div class="form-section-title">Complete This Generated Plan</div>
+                        <!-- Review banner — shown when all exercises complete and session is in review -->
+                        <div class="session-review-banner" id="session-review-banner" hidden>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            <div>
+                                <strong>All exercises complete!</strong>
+                                <span id="session-review-summary"></span>
+                            </div>
+                        </div>
+
+                        <div class="generated-plan-actions" hidden>
+                            <div class="form-section-title">Complete This Session</div>
                             <label for="generated-duration">Duration (min)</label>
-                            <input type="number" id="generated-duration" min="1" placeholder="e.g. 45">
+                            <div class="duration-preset-grid" id="generated-duration-presets">
+                                <button type="button" class="duration-preset-btn" data-target="generated-duration" data-value="15">15</button>
+                                <button type="button" class="duration-preset-btn" data-target="generated-duration" data-value="30">30</button>
+                                <button type="button" class="duration-preset-btn" data-target="generated-duration" data-value="45">45</button>
+                                <button type="button" class="duration-preset-btn" data-target="generated-duration" data-value="60">60</button>
+                                <button type="button" class="duration-preset-btn" data-target="generated-duration" data-value="90">90</button>
+                            </div>
+                            <input type="number" id="generated-duration" min="1" step="5" placeholder="or type a value">
 
                             <label for="generated-notes">Completion Notes</label>
-                            <textarea id="generated-notes" rows="4" placeholder="Optional notes about effort, form, or how the workout felt."></textarea>
+                            <textarea id="generated-notes" rows="3" placeholder="Optional — effort level, form notes, how it felt."></textarea>
 
-                            <button type="button" class="btn" id="complete-generated-btn">Complete Generated Workout</button>
+                            <button type="button" class="btn" id="complete-generated-btn">Mark Session Complete</button>
                             <p id="generated-plan-status" class="save-status" aria-live="polite"></p>
                         </div>
                     </div>
@@ -136,6 +482,124 @@
                         <div class="tip-label">Quick Tip</div>
                         <p>Aim for at least 150 minutes of moderate activity per week. Consistency beats intensity for long-term progress.</p>
                     </div>
+                </div>
+                </div><!-- /.workout-split#guided-split -->
+            </div><!-- /#guided-path -->
+
+            <!-- ===================== MANUAL LOG PATH ===================== -->
+            <div class="manual-log-section workout-view-panel" id="manual-path" hidden>
+                <div class="manual-log-card">
+                    <div class="manual-log-header">
+                        <div>
+                            <div class="eyebrow" style="margin-bottom:0.5rem">Manual Log</div>
+                            <h3 class="manual-log-title">Log a Completed Session</h3>
+                            <p class="manual-log-lead">Already finished your workout? Record it here to keep your history complete.</p>
+                        </div>
+                    </div>
+
+                    <form id="workout-form" class="manual-log-form">
+                        <fieldset class="manual-type-fieldset">
+                            <legend class="manual-field-label">Workout Type</legend>
+                            <div class="manual-type-grid" id="manual-type-grid" role="group">
+                                <label class="manual-type-option">
+                                    <input type="radio" name="workout-type-radio" value="running" checked>
+                                    <span class="manual-type-face">
+                                        <span class="manual-type-icon" aria-hidden="true">
+                                            <!-- Lucide: person walking / footprints path -->
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="4" r="1.5"/>
+                                                <path d="M9 12l2-2 2.5 3L16 9"/>
+                                                <path d="M7 20l2-5h6l2 5"/>
+                                                <path d="M10 13l-2 3"/>
+                                                <path d="M14 13l2 3"/>
+                                            </svg>
+                                        </span>
+                                        <span class="manual-type-name">Running</span>
+                                    </span>
+                                </label>
+                                <label class="manual-type-option">
+                                    <input type="radio" name="workout-type-radio" value="cycling">
+                                    <span class="manual-type-face">
+                                        <span class="manual-type-icon" aria-hidden="true">
+                                            <!-- Lucide: bike -->
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="18.5" cy="17.5" r="3.5"/>
+                                                <circle cx="5.5" cy="17.5" r="3.5"/>
+                                                <circle cx="15" cy="5" r="1"/>
+                                                <path d="M12 17.5V14l-3-3 4-3 2 3h2"/>
+                                            </svg>
+                                        </span>
+                                        <span class="manual-type-name">Cycling</span>
+                                    </span>
+                                </label>
+                                <label class="manual-type-option">
+                                    <input type="radio" name="workout-type-radio" value="weights">
+                                    <span class="manual-type-face">
+                                        <span class="manual-type-icon" aria-hidden="true">
+                                            <!-- Lucide: dumbbell -->
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/>
+                                                <rect x="4.5" y="5.5" width="2" height="13" rx="1"/>
+                                                <rect x="17.5" y="5.5" width="2" height="13" rx="1"/>
+                                                <rect x="1.5" y="8.5" width="3" height="7" rx="1"/>
+                                                <rect x="19.5" y="8.5" width="3" height="7" rx="1"/>
+                                                <line x1="8" y1="12" x2="16" y2="12"/>
+                                            </svg>
+                                        </span>
+                                        <span class="manual-type-name">Weights</span>
+                                    </span>
+                                </label>
+                                <label class="manual-type-option">
+                                    <input type="radio" name="workout-type-radio" value="other">
+                                    <span class="manual-type-face">
+                                        <span class="manual-type-icon" aria-hidden="true">
+                                            <!-- Lucide: layers -->
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                                <polyline points="2 17 12 22 22 17"/>
+                                                <polyline points="2 12 12 17 22 12"/>
+                                            </svg>
+                                        </span>
+                                        <span class="manual-type-name">Other</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <!-- Hidden select keeps existing JS API contract -->
+                            <select id="workout-type" name="type" style="display:none" aria-hidden="true">
+                                <option value="running">Running</option>
+                                <option value="cycling">Cycling</option>
+                                <option value="weights">Weights</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </fieldset>
+
+                        <div class="manual-log-fields">
+                            <div class="manual-log-field">
+                                <label class="manual-field-label" for="duration">Duration</label>
+                                <div class="duration-preset-grid" id="manual-duration-presets">
+                                    <button type="button" class="duration-preset-btn" data-target="duration" data-value="15">15</button>
+                                    <button type="button" class="duration-preset-btn" data-target="duration" data-value="30">30</button>
+                                    <button type="button" class="duration-preset-btn" data-target="duration" data-value="45">45</button>
+                                    <button type="button" class="duration-preset-btn" data-target="duration" data-value="60">60</button>
+                                    <button type="button" class="duration-preset-btn" data-target="duration" data-value="90">90</button>
+                                </div>
+                                <div class="manual-duration-input-wrap">
+                                    <input type="number" id="duration" name="duration" min="1" step="5" required placeholder="or type a value" class="manual-duration-input">
+                                    <span class="manual-duration-unit">min</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="manual-log-field">
+                            <label class="manual-field-label" for="notes">Session Notes <span class="manual-field-optional">(optional)</span></label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="How did it go? Any highlights, PRs, or goals hit?"></textarea>
+                        </div>
+
+                        <div class="manual-log-footer">
+                            <button type="submit" class="btn btn--manual-save">Save Workout</button>
+                            <p id="manual-save-status" class="save-status" aria-live="polite"></p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
@@ -153,7 +617,7 @@
                     <a href="map.html">Map</a>
                     <a href="settings.html">Settings</a>
                 </div>
-                <p class="footer-copy">Workout logging stays tied to existing form IDs and API contract.</p>
+                <p class="footer-copy">Every session logged feeds your dashboard and progress charts.</p>
             </div>
         </footer>
     </div>

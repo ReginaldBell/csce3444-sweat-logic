@@ -97,6 +97,13 @@ public class RecommendationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+        // Validate body-part / goal compatibility
+        boolean isGoalRestricted = (parsedGoal == Goal.CARDIO || parsedGoal == Goal.ENDURANCE);
+        if (isGoalRestricted && parsedBodyPart != BodyPart.CORE) {
+            return ResponseEntity.badRequest()
+                    .body("Cardio and endurance plans are currently available for Core only.");
+        }
+
         WorkoutPlan plan = recommendationService.generateWorkout(
                 parsedBodyPart, parsedGoal, parsedLevel, seed);
 
