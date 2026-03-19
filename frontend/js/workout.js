@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_LEVEL = 'intermediate';
     const LAST_PATH_KEY = 'sweatlogic-last-path';
     const SESSION_KEY = 'sweatlogic-active-guided-session';
+    const REVIEW_DRAFT_KEY = 'sweatlogic-guided-review-draft';
+    const SETTINGS_EVENT = 'sweatlogic:settings-updated';
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const GOAL_OPTIONS = new Set(['strength', 'cardio', 'endurance']);
     const LEVEL_OPTIONS = new Set(['beginner', 'intermediate', 'advanced']);
@@ -32,6 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
         return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
+
+    function getDisplayName() {
+        const username = (localStorage.getItem('username') || '').trim();
+        if (username) {
+            return username;
+        }
+
+        try {
+            const profile = JSON.parse(localStorage.getItem('sweatlogic-profile') || '{}');
+            return String(profile.name || '').trim();
+        } catch {
+            return '';
+        }
     }
 
     async function requestApi(path, options = {}) {
@@ -216,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generatedNotes      = document.getElementById('generated-notes');
     const completeGeneratedButton = document.getElementById('complete-generated-btn');
     const generatedPlanStatus = document.getElementById('generated-plan-status');
+    const bodyPartLinks       = Array.from(document.querySelectorAll('.body-parts-style'));
 
     // Timer / session control refs
     const sessionTimer      = document.getElementById('session-timer');
@@ -255,6 +272,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearActiveSession() {
         sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    function loadReviewDraft() {
+        try {
+            const raw = sessionStorage.getItem(REVIEW_DRAFT_KEY);
+            return raw ? JSON.parse(raw) : {};
+        } catch {
+            return {};
+        }
+    }
+
+    function saveReviewDraft() {
+        sessionStorage.setItem(REVIEW_DRAFT_KEY, JSON.stringify({
+            duration: generatedDuration ? generatedDuration.value : '',
+            notes: generatedNotes ? generatedNotes.value : '',
+        }));
+    }
+
+    function clearReviewDraft() {
+        sessionStorage.removeItem(REVIEW_DRAFT_KEY);
     }
 
     function escapeHtml(str) {
@@ -399,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function discardSession() {
         stopTimerInterval();
         clearActiveSession();
+        clearReviewDraft();
         if (generatedDuration) generatedDuration.value = '';
         if (generatedNotes) generatedNotes.value = '';
         renderGuidedSession(null);
@@ -528,36 +566,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    goalOptionBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            if (btn.disabled) return;
-            const goal = btn.dataset.goal;
-            goalSelect.value = goal;
-            goalOptionBtns.forEach((b) => b.setAttribute('aria-pressed', 'false'));
-            btn.setAttribute('aria-pressed', 'true');
-            pulseElement(btn);
-            persistBuilderPreferences();
+    function setGoalSelection(goal, { advance = true, animate = true } = {}) {
+        const targetButton = Array.from(goalOptionBtns).find((btn) => btn.dataset.goal === goal);
+        if (!targetButton || targetButton.disabled) {
+            return false;
+        }
+
+        goalSelect.value = goal;
+        goalOptionBtns.forEach((btn) => {
+            btn.setAttribute('aria-pressed', String(btn.dataset.goal === goal));
+        });
+
+        if (animate) {
+            pulseElement(targetButton);
+        }
+
+        persistBuilderPreferences();
+
+        if (advance) {
             revealStep('level');
             setActiveStep(3);
+        }
+
+        return true;
+    }
+
+    goalOptionBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            setGoalSelection(btn.dataset.goal);
         });
     });
 
     // ── Level options ───────────────────────────────────────────────
-    levelOptionBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const level = btn.dataset.level;
-            levelSelect.value = level;
-            levelOptionBtns.forEach((b) => {
-                b.classList.remove('is-active');
-                b.setAttribute('aria-pressed', 'false');
-            });
-            btn.classList.add('is-active');
-            btn.setAttribute('aria-pressed', 'true');
-            pulseElement(btn);
-            persistBuilderPreferences();
+    function setLevelSelection(level, { advance = true, animate = true } = {}) {
+        const targetButton = Array.from(levelOptionBtns).find((btn) => btn.dataset.level === level);
+        if (!targetButton) {
+            return false;
+        }
+
+        levelSelect.value = level;
+        levelOptionBtns.forEach((btn) => {
+            const isActive = btn.dataset.level === level;
+            btn.classList.toggle('is-active', isActive);
+            btn.setAttribute('aria-pressed', String(isActive));
+        });
+
+        if (animate) {
+            pulseElement(targetButton);
+        }
+
+        persistBuilderPreferences();
+
+        if (advance) {
             revealStep('generate');
             setActiveStep(4);
             refreshGenerateSummary();
+        }
+
+        return true;
+    }
+
+    levelOptionBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            setLevelSelection(btn.dataset.level);
         });
     });
 
@@ -642,24 +713,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activateMuscleGroup(bodyPart);
 
-        goalOptionBtns.forEach((btn) => {
-            btn.setAttribute('aria-pressed', String(btn.dataset.goal === storedGoal));
-        });
-
-        levelOptionBtns.forEach((btn) => {
-            const active = btn.dataset.level === level;
-            btn.classList.toggle('is-active', active);
-            btn.setAttribute('aria-pressed', String(active));
-        });
-
         updateGoalOptions(bodyPart);
+        setGoalSelection(goalSelect.value, { advance: false, animate: false });
+        setLevelSelection(level, { advance: false, animate: false });
+        refreshGenerateSummary();
 
         if (storedBodyPart && availableBodyParts.has(storedBodyPart)) {
             stepGoal.hidden     = false;
             stepLevel.hidden    = false;
             stepGenerate.hidden = false;
             setActiveStep(4);
-            refreshGenerateSummary();
         }
     }
 
@@ -894,12 +957,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGuidedSession(session) {
         syncWorkoutBgState(session);
         renderSessionChrome(session);
+        const displayName = getDisplayName();
 
         if (!session) {
             // No session — reset output panel to empty state
             setOutputPanelState('idle');
             if (outputTitle) outputTitle.textContent = 'Your Session';
-            if (outputCopy) outputCopy.textContent = 'Complete the steps on the left to generate your personalized workout plan.';
+            if (outputCopy) {
+                outputCopy.textContent = displayName
+                    ? `${displayName}, complete the steps on the left to generate your personalized workout plan.`
+                    : 'Complete the steps on the left to generate your personalized workout plan.';
+            }
             if (emptyState) emptyState.hidden = false;
             if (generatedPlanPanel) {
                 generatedPlanPanel.classList.remove('is-plan-visible');
@@ -922,7 +990,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Active session
         setOutputPanelState('ready');
         if (outputTitle) outputTitle.textContent = `${toTitleCase(session.bodyPart)} Workout`;
-        if (outputCopy) outputCopy.textContent = '';
+        if (outputCopy) {
+            outputCopy.textContent = displayName
+                ? `Built for ${displayName}. Stay with the current exercise spotlight and save the session when you finish.`
+                : 'Stay with the current exercise spotlight and save the session when you finish.';
+        }
         if (emptyState) emptyState.hidden = true;
         if (generatedPlanPanel) {
             const wasHidden = generatedPlanPanel.hidden;
@@ -936,6 +1008,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSessionControls(session);
         renderChecklist(session);
         renderCompletionActions(session);
+
+        const reviewDraft = loadReviewDraft();
+        if (generatedDuration && reviewDraft.duration && !generatedDuration.value) {
+            generatedDuration.value = reviewDraft.duration;
+        }
+        if (generatedNotes && reviewDraft.notes && !generatedNotes.value) {
+            generatedNotes.value = reviewDraft.notes;
+        }
 
         // Auto-fill duration when restoring a review session with an empty field
         if (session.status === 'review' && generatedDuration && !generatedDuration.value && session.elapsedSeconds > 0) {
@@ -1061,6 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await requestApi('/workouts', { method: 'POST', body: JSON.stringify(payload) });
             clearActiveSession();
             stopTimerInterval();
+            clearReviewDraft();
             renderGuidedSession(null);
             setStatus(recommendationStatus, 'Session saved to your workout history.', 'success');
         } catch (error) {
@@ -1086,9 +1167,16 @@ document.addEventListener('DOMContentLoaded', () => {
     manualForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
+        const durationValue = parseInt(manualDuration.value, 10);
+        if (!Number.isFinite(durationValue) || durationValue <= 0) {
+            setStatus(manualSaveStatus, 'Enter a valid duration before saving.', 'error');
+            manualDuration.focus();
+            return;
+        }
+
         const payload = {
             type:     workoutTypeSelect ? workoutTypeSelect.value : 'other',
-            duration: parseInt(manualDuration.value, 10),
+            duration: durationValue,
             notes:    manualNotes.value,
             date:     formatLocalDateTime(),
         };
@@ -1117,6 +1205,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ── Init ────────────────────────────────────────────────────────
+    if (generatedDuration) {
+        generatedDuration.addEventListener('input', saveReviewDraft);
+    }
+
+    if (generatedNotes) {
+        generatedNotes.addEventListener('input', saveReviewDraft);
+    }
+
+    bodyPartLinks.forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const url = new URL(link.href, window.location.href);
+            const part = url.searchParams.get('part');
+            if (!part) {
+                return;
+            }
+
+            activatePath('guided');
+            selectBodyPart(part);
+            setGoalSelection(goalSelect.value, { advance: true, animate: false });
+            setLevelSelection(levelSelect.value, { advance: true, animate: false });
+            refreshGenerateSummary();
+
+            if (stepGenerate) {
+                stepGenerate.scrollIntoView({ behavior: getMotionBehavior(), block: 'nearest' });
+            }
+        });
+    });
+
+    function syncFromStoredSettings() {
+        const activeSession = loadActiveSession();
+        if (activeSession && activeSession.status !== 'completed') {
+            renderGuidedSession(activeSession);
+            return;
+        }
+
+        const previousBodyPart = bodyPartSelect ? bodyPartSelect.value : DEFAULT_BODY_PART;
+        loadBuilderPreferences();
+
+        if (bodyPartSelect && bodyPartSelect.value !== previousBodyPart) {
+            selectBodyPart(bodyPartSelect.value);
+            setGoalSelection(goalSelect.value, { advance: true, animate: false });
+            setLevelSelection(levelSelect.value, { advance: true, animate: false });
+        }
+
+        renderGuidedSession(null);
+    }
+
+    window.addEventListener(SETTINGS_EVENT, syncFromStoredSettings);
+    window.addEventListener('storage', (event) => {
+        if (['username', 'goal', 'level', 'recommendBodyPart', 'sweatlogic-profile'].includes(event.key)) {
+            syncFromStoredSettings();
+        }
+    });
+
     setActiveStep(1);
 
     const storedPath = localStorage.getItem(LAST_PATH_KEY);
