@@ -4626,36 +4626,36 @@ form .btn {
     }
 }
 
-<<<<<<< HEAD
-
-.body-parts-recommendation{
+.body-parts-recommendation {
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
     margin-top: 10px;
 }
 
-.body-parts-style{
+.body-parts-style {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 15px 10px;
-    background: #ffffff;
-    border: 1px solid #000000;
-    border-radius: 10px;
+    padding: 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     text-decoration: none;
-    color: #000000;
+    color: #1b1b1b;
     font-weight: 600;
+    font-size: 0.95rem;
+    transition: transform var(--motion-hover), box-shadow var(--motion-hover), border-color var(--motion-hover), background var(--motion-hover), color var(--motion-hover);
 }
 
-.body-parts-style:hover{
-    border-color: rgba(11, 143, 42, 0.3);
+.body-parts-style:hover {
+    border-color: rgba(11, 143, 42, 0.35);
     background: var(--green-soft);
     color: var(--green-deep);
     transform: translateY(-2px);
-    box-shadow: 0 8px 14px rgba(11, 143, 42, 0.1);
+    box-shadow: 0 8px 20px rgba(11, 143, 42, 0.12);
 }
-=======
+
 @keyframes timerBeat {
     0%, 100% {
         transform: scale(1);
@@ -4991,4 +4991,3 @@ form .btn {
         animation: none;
     }
 }
->>>>>>> feature/ui-next-integration

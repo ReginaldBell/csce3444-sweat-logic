@@ -574,13 +574,18 @@ function generateCalendar(){
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November","December" ];
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     monthLabel.innerText = monthNames[month] + " " + year;
 
-    const firstDay = new Date(year, month, 1 ).getDay();
-    const daysInMonth = new Date(year, month +1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     grid.innerHTML = "";
+
+    // Blank offset cells so day 1 lands on the correct weekday column
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div></div>`;
+    }
 
     const workedOutDays = [2,4,5,10,12,13,15]; // Temp values
 
@@ -588,19 +593,26 @@ function generateCalendar(){
         const isToday = day === now.getDate();
         const hasWorkout = workedOutDays.includes(day);
 
+        let bg = hasWorkout ? 'var(--green)' : 'transparent';
+        let color = hasWorkout ? '#fff' : '#444';
+        let weight = (hasWorkout || isToday) ? '700' : '400';
+        let shadow = hasWorkout ? 'box-shadow: 0 4px 16px rgba(11,143,42,0.35);' : '';
+        let outline = isToday ? 'outline: 2.5px solid #1b1b1b; outline-offset: 2px;' : '';
+
         grid.innerHTML += `
             <div style="
-                height: 35px;
+                aspect-ratio: 1;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 border-radius: 50%;
-                font-size: 0.9em;
-                ${hasWorkout ? 'background: #32CD32; color: white;' : 'color: #333;'}
-                ${isToday ? 'border: 2px solid #1b1b1b;' : ''}
-            ">
-                ${day}
-            </div>
+                font-size: 1rem;
+                font-weight: ${weight};
+                color: ${color};
+                background: ${bg};
+                ${shadow}
+                ${outline}
+            ">${day}</div>
         `;
     }
 }
