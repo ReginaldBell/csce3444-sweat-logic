@@ -123,6 +123,48 @@
     </div>
 
     <script>
+        const EXERCISE_DATA = {
+            chest: [
+                { name: "Barbell Bench Press"},
+                { name: "Incline Dumbbell Press"},
+                { name: "Chest Dips"},
+                { name: "Push Ups"},
+                { name: "Cable Crossovers"},
+                { name: "Chest Fly Machine"}
+            ],
+            back: [
+                { name: "Pull-ups"},
+                { name: "Bent Over Barbell Rows"},
+                { name: "Lat Pulldowns"},
+                { name: "Seated Rows"},
+                { name: "Deadlift"},
+                { name: "Dumbbell Rows"}
+            ],
+            legs: [
+                { name: "Barbell Squats"},
+                { name: "Leg Press"},
+                { name: "Calf Raises"},
+                { name: "Romanian Deadlifts"},
+                { name: "Leg Extensions"},
+                { name: "Bulgarian Split Squats"}
+            ],
+            arms: [
+                { name: "Dumbbell Bicep Curls"},
+                { name: "Tricep Pushdowns"},
+                { name: "Hammer Curls"},
+                { name: "Lateral Raises"},
+                { name: "Shoulder Press"},
+                { name: "Skull Crushers"}
+            ],
+            core: [
+                { name: "Plank"},
+                { name: "Hanging Leg Raises"},
+                { name: "Russian Twists"},
+                { name: "Decline Sit Ups"},
+                { name: "Dead Bugs"},
+                { name: "Mountain Climbers"}
+            ]
+        };
         const PART_LABELS = {
             chest: 'Chest',
             back: 'Back',
@@ -139,13 +181,8 @@
             document.title = label + ' Recommendations - SweatLogic';
             document.getElementById('rec-part-label').textContent = label;
 
-            fetch(`/api/recommendations/generate/${part}?goal=strength&level=intermediate`)
-                .then(res => {
-                    if (!res.ok) throw new Error('Server returned ' + res.status);
-                    return res.json();
-                })
-                .then(plan => renderPlan(plan))
-                .catch(err => showError(err));
+            const data = EXERCISE_DATA[part] || EXERCISE_DATA.chest;
+            renderPlan({ exercises: data });
         });
 
         function renderPlan(plan) {
@@ -161,10 +198,8 @@
             grid.hidden = false;
 
             grid.innerHTML = plan.exercises.map(ex => `
-                <div class="dash-panel exercise-card">
+                <div class="exercise-card">
                     <h4>${ex.name}</h4>
-                    <p class="exercise-meta">${ex.sets} sets &times; ${ex.reps}</p>
-                    <p class="exercise-instructions">${ex.instructions}</p>
                 </div>
             `).join('');
         }

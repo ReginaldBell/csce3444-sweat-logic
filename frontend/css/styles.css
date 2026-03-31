@@ -5013,3 +5013,28 @@ form .btn {
         animation: none;
     }
 }
+
+/* body part recommendations */
+.page-home #rec-container.dash-panel{
+    transform: none;
+    box-shadow: var(--shadow);
+    border-color: var(--border);
+}
+
+.rec-grid .exercise-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    background: var(--surface-strong);
+    box-shadow: var(--shadow);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 80px;
+
+    transform: none;
+    transition: none;
+    cursor: default;
+}
