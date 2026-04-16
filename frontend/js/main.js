@@ -1,5 +1,3 @@
-const API_BASE = 'http://localhost:8080/api';
-
 const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionGroups = [
     {
@@ -69,6 +67,40 @@ async function apiFetch(path, options = {}) {
     }
 
     return payload;
+}
+
+const DEFAULT_BACKEND_DOWN_MESSAGE = 'Could not reach the server. Check that the backend is running and try again.';
+
+function setAlertState(element, message, tone = 'error') {
+    if (!element) {
+        return;
+    }
+
+    element.textContent = message || '';
+    element.hidden = !message;
+    element.classList.remove('is-visible', 'is-error', 'is-success');
+
+    if (!message) {
+        return;
+    }
+
+    element.classList.add('is-visible', tone === 'error' ? 'is-error' : 'is-success');
+}
+
+function isBackendUnavailable(error) {
+    return !Number.isFinite(error?.status);
+}
+
+function getRequestErrorMessage(error, fallback = DEFAULT_BACKEND_DOWN_MESSAGE) {
+    if (isBackendUnavailable(error)) {
+        return fallback;
+    }
+
+    if (typeof error?.message === 'string' && error.message.trim()) {
+        return error.message.trim();
+    }
+
+    return fallback;
 }
 
 function findMatches(root, selector) {
@@ -562,61 +594,79 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.getWorkoutMetrics = getWorkoutMetrics;
     window.clearProfile = clearProfile;
+    window.setAlertState = setAlertState;
+    window.getRequestErrorMessage = getRequestErrorMessage;
+    window.DEFAULT_BACKEND_DOWN_MESSAGE = DEFAULT_BACKEND_DOWN_MESSAGE;
     applyUnitSettings();
     loadSavedProfile();
     initializeMotion();
 });
 
-function generateCalendar(){
+// SVG icons keyed by workout type for the calendar cells
+const CAL_TYPE_ICONS = {
+    running: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"/><path d="M7 22l3.5-7 2 3.5 3-5 3 8.5"/><path d="M10 9L7 14h5"/><path d="M14 9l1.5 3"/></svg>`,
+    cycling: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>`,
+    weights: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="4.5" y="5.5" width="2" height="13" rx="1"/><rect x="17.5" y="5.5" width="2" height="13" rx="1"/><rect x="1.5" y="8.5" width="3" height="7" rx="1"/><rect x="19.5" y="8.5" width="3" height="7" rx="1"/></svg>`,
+    other:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+};
+
+function generateCalendar(workouts = [], displayYear, displayMonth) {
     const grid = document.getElementById('calendar-grid');
     const monthLabel = document.getElementById('calendar-month');
+    const monthlyCountEl = document.getElementById('cal-monthly-count');
     if (!grid || !monthLabel) return;
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    monthLabel.innerText = monthNames[month] + " " + year;
 
-    const firstDay = new Date(year, month, 1).getDay();
+    const now = new Date();
+    const year  = displayYear  ?? now.getFullYear();
+    const month = displayMonth ?? now.getMonth();
+
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    monthLabel.textContent = monthNames[month] + " " + year;
+
+    const firstDay    = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    grid.innerHTML = "";
+    // Build day → workout-type map for this month (first workout on that day wins)
+    const dayTypeMap = {};
+    workouts.forEach(w => {
+        const d = new Date(w.date);
+        if (d.getFullYear() === year && d.getMonth() === month) {
+            const day = d.getDate();
+            if (!dayTypeMap[day]) dayTypeMap[day] = (w.type || 'other').toLowerCase();
+        }
+    });
 
-    // Blank offset cells so day 1 lands on the correct weekday column
-    for (let i = 0; i < firstDay; i++) {
-        grid.innerHTML += `<div></div>`;
+    if (monthlyCountEl) {
+        monthlyCountEl.textContent = Object.keys(dayTypeMap).length;
     }
 
-    const workedOutDays = [2,4,5,10,12,13,15]; // Temp values
+    grid.innerHTML = '';
+
+    // Blank offset cells
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div class="cal-cell"></div>`;
+    }
+
+    const todayDay = (now.getFullYear() === year && now.getMonth() === month) ? now.getDate() : -1;
 
     for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = day === now.getDate();
-        const hasWorkout = workedOutDays.includes(day);
+        const isToday     = day === todayDay;
+        const workoutType = dayTypeMap[day];
+        const hasWorkout  = !!workoutType;
+        const icon        = CAL_TYPE_ICONS[workoutType] || CAL_TYPE_ICONS.other;
 
-        let bg = hasWorkout ? 'var(--green)' : 'transparent';
-        let color = hasWorkout ? '#fff' : '#444';
-        let weight = (hasWorkout || isToday) ? '700' : '400';
-        let shadow = hasWorkout ? 'box-shadow: 0 4px 16px rgba(11,143,42,0.35);' : '';
-        let outline = isToday ? 'outline: 2.5px solid #1b1b1b; outline-offset: 2px;' : '';
+        let cls = 'cal-cell';
+        if (hasWorkout) cls += ' cal-cell--workout';
+        if (isToday)    cls += ' cal-cell--today';
 
-        grid.innerHTML += `
-            <div style="
-                aspect-ratio: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                font-size: 1rem;
-                font-weight: ${weight};
-                color: ${color};
-                background: ${bg};
-                ${shadow}
-                ${outline}
-            ">${day}</div>
-        `;
+        if (hasWorkout) {
+            grid.innerHTML += `
+                <div class="${cls}" title="${workoutType}">
+                    <div class="cal-cell__icon-wrap">${icon}</div>
+                    <span class="cal-cell__day">${day}</span>
+                </div>`;
+        } else {
+            grid.innerHTML += `<div class="${cls}"><span class="cal-cell__num">${day}</span></div>`;
+        }
     }
 }
-
-window.addEventListener('load', () => {
-    generateCalendar();
-})

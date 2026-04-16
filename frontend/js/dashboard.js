@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    const backendStatus = document.getElementById('dashboard-backend-status');
 
     // ── SVG icon map ────────────────────────────────────────────────
     const TYPE_ICONS = {
@@ -48,6 +49,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const workouts = await apiFetch('/workouts');
+        if (typeof window.setAlertState === 'function') {
+            window.setAlertState(backendStatus, '');
+        }
         const metrics = typeof window.getWorkoutMetrics === 'function'
             ? window.getWorkoutMetrics(workouts)
             : { currentStreak: 0, longestStreak: 0 };
@@ -103,17 +107,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             else avgEl.textContent = '--';
         }
 
-        animateCountUp(document.getElementById('streak-count'), metrics.currentStreak);
+        // Streak card — neutral empty state when streak is 0
+        const streakCard  = document.getElementById('streak-card');
+        const streakEl    = document.getElementById('streak-count');
+        const streakLabel = document.getElementById('streak-label');
+        if (metrics.currentStreak === 0) {
+            if (streakEl)    streakEl.textContent = '--';
+            if (streakLabel) streakLabel.textContent = 'No Active Streak';
+            if (streakCard)  streakCard.classList.add('stat-card--muted');
+        } else {
+            animateCountUp(streakEl, metrics.currentStreak);
+        }
 
         // Week-over-week deltas
-        injectDelta('total-workouts', weeklyCount, prevWeekCount);
-        injectDelta('total-duration', totalDuration, prevDuration);
+        injectDelta('total-workouts-card', weeklyCount, prevWeekCount);
+        injectDelta('total-duration-card', totalDuration, prevDuration);
 
         // Weekly summary tiles
-        const sessionsCount = document.getElementById('weekly-sessions-count');
-        const timeTotal     = document.getElementById('weekly-time-total');
+        const sessionsCount   = document.getElementById('weekly-sessions-count');
+        const timeTotal       = document.getElementById('weekly-time-total');
+        const weeklyAvgEl     = document.getElementById('weekly-avg-duration');
+        const weeklyBestEl    = document.getElementById('weekly-best-session');
         if (sessionsCount) animateCountUp(sessionsCount, weeklyCount);
         if (timeTotal)     animateCountUp(timeTotal, totalDuration);
+        if (weeklyAvgEl) {
+            if (weeklyCount > 0) animateCountUp(weeklyAvgEl, avgDuration);
+            else weeklyAvgEl.textContent = '--';
+        }
+        if (weeklyBestEl) {
+            const best = weeklyWorkouts.length > 0
+                ? Math.max(...weeklyWorkouts.map((w) => w.duration))
+                : 0;
+            if (best > 0) animateCountUp(weeklyBestEl, best);
+            else weeklyBestEl.textContent = '--';
+        }
 
         // Progress meters
         const statCards = document.querySelectorAll('.stat-card');
@@ -131,7 +158,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (typeof window.refreshMotion === 'function') window.refreshMotion();
 
+        // Calendar — render current month, wire prev/next navigation
+        let calYear  = new Date().getFullYear();
+        let calMonth = new Date().getMonth();
+        if (typeof generateCalendar === 'function') generateCalendar(workouts, calYear, calMonth);
+
+        document.getElementById('cal-prev')?.addEventListener('click', () => {
+            calMonth--;
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            if (typeof generateCalendar === 'function') generateCalendar(workouts, calYear, calMonth);
+        });
+        document.getElementById('cal-next')?.addEventListener('click', () => {
+            calMonth++;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (typeof generateCalendar === 'function') generateCalendar(workouts, calYear, calMonth);
+        });
+
     } catch (err) {
-        console.error('Failed to load dashboard data:', err);
+        if (typeof window.setAlertState === 'function') {
+            window.setAlertState(
+                backendStatus,
+                typeof window.getRequestErrorMessage === 'function'
+                    ? window.getRequestErrorMessage(err)
+                    : 'Could not reach the server. Check that the backend is running and try again.',
+                'error'
+            );
+        }
     }
 });

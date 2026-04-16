@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const WORKOUT_API_BASE = 'http://localhost:8080/api';
     const DEFAULT_BODY_PART = 'chest';
     const DEFAULT_GOAL = 'strength';
     const DEFAULT_LEVEL = 'intermediate';
@@ -7,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SESSION_KEY = 'sweatlogic-active-guided-session';
     const REVIEW_DRAFT_KEY = 'sweatlogic-guided-review-draft';
     const SETTINGS_EVENT = 'sweatlogic:settings-updated';
+    const backendStatus = document.getElementById('workout-backend-status');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const GOAL_OPTIONS = new Set(['strength', 'cardio', 'endurance']);
     const LEVEL_OPTIONS = new Set(['beginner', 'intermediate', 'advanced']);
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function requestApi(path, options = {}) {
-        const response = await fetch(`${WORKOUT_API_BASE}${path}`, {
+        const response = await fetch(`${API_BASE}${path}`, {
             headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
             ...options,
         });
@@ -90,6 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
         element.classList.remove('is-visible', 'is-error', 'is-success');
         if (!message) return;
         element.classList.add('is-visible', tone === 'error' ? 'is-error' : 'is-success');
+    }
+
+    function setBackendStatus(error, fallback = 'Could not reach the server. Check that the backend is running and try again.') {
+        if (typeof window.setAlertState !== 'function') {
+            return;
+        }
+
+        const message = typeof window.getRequestErrorMessage === 'function'
+            ? window.getRequestErrorMessage(error, fallback)
+            : fallback;
+
+        window.setAlertState(backendStatus, message, 'error');
+    }
+
+    function clearBackendStatus() {
+        if (typeof window.setAlertState === 'function') {
+            window.setAlertState(backendStatus, '');
+        }
     }
 
     function setLoading(button, isLoading, loadingText, defaultText) {
@@ -1078,10 +1096,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const session = createSessionFromPlan(plan);
             saveActiveSession(session);
             renderGuidedSession(session);
+            clearBackendStatus();
             setStatus(recommendationStatus, 'Workout plan ready \u2014 start the timer when you\'re ready to begin.', 'success');
         } catch (error) {
             setOutputPanelState('idle');
-            setStatus(recommendationStatus, error.message || 'Unable to generate a workout plan right now.', 'error');
+            setBackendStatus(error);
+            setStatus(
+                recommendationStatus,
+                typeof window.getRequestErrorMessage === 'function'
+                    ? window.getRequestErrorMessage(error, 'Unable to generate a workout plan right now.')
+                    : (error.message || 'Unable to generate a workout plan right now.'),
+                'error'
+            );
         } finally {
             setLoading(generateButton, false, 'Generating Plan\u2026', 'Generate Workout Plan');
         }
@@ -1143,9 +1169,17 @@ document.addEventListener('DOMContentLoaded', () => {
             stopTimerInterval();
             clearReviewDraft();
             renderGuidedSession(null);
+            clearBackendStatus();
             setStatus(recommendationStatus, 'Session saved to your workout history.', 'success');
         } catch (error) {
-            setStatus(generatedPlanStatus, error.message || 'Unable to save the session.', 'error');
+            setBackendStatus(error);
+            setStatus(
+                generatedPlanStatus,
+                typeof window.getRequestErrorMessage === 'function'
+                    ? window.getRequestErrorMessage(error, 'Unable to save the session.')
+                    : (error.message || 'Unable to save the session.'),
+                'error'
+            );
         } finally {
             setLoading(completeGeneratedButton, false, 'Saving\u2026', 'Save Session');
         }
@@ -1187,6 +1221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await requestApi('/workouts', { method: 'POST', body: JSON.stringify(payload) });
+            clearBackendStatus();
             setStatus(manualSaveStatus, 'Workout saved to your history.', 'success');
             celebrateElement(manualForm.closest('.manual-log-card'));
             const firstRadio = manualForm.querySelector('input[name="workout-type-radio"]');
@@ -1198,7 +1233,14 @@ document.addEventListener('DOMContentLoaded', () => {
             manualDuration.value = '';
             manualNotes.value    = '';
         } catch (error) {
-            setStatus(manualSaveStatus, error.message || 'Error saving workout.', 'error');
+            setBackendStatus(error);
+            setStatus(
+                manualSaveStatus,
+                typeof window.getRequestErrorMessage === 'function'
+                    ? window.getRequestErrorMessage(error, 'Error saving workout.')
+                    : (error.message || 'Error saving workout.'),
+                'error'
+            );
         } finally {
             setLoading(submitBtn, false, 'Saving\u2026', 'Save Workout');
         }

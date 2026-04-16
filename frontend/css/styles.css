@@ -19,7 +19,7 @@
     --radius-lg: 28px;
     --radius-md: 18px;
     --radius-sm: 12px;
-    --container: 1120px;
+    --container: 1280px;
     --motion-curve: cubic-bezier(0.22, 1, 0.36, 1);
     --motion-curve-sharp: cubic-bezier(0.18, 0.9, 0.22, 1.18);
     --motion-soft: 700ms var(--motion-curve);
@@ -38,19 +38,19 @@
     --map-surface: #0c1610;
 
     /* ── Background system — public tokens ── */
-    --bg-primary:   #eef8f2;
-    --bg-secondary: #f9fcff;
-    --bg-accent:    #f3f8ff;
+    --bg-primary:   #0e1f14;
+    --bg-secondary: #0c1b1d;
+    --bg-accent:    #0d1a12;
     --bg-intensity: 1;
     --bg-noise:     0;
 
     /* ── Background system — internal helpers ── */
-    --bg-effect-a:        rgba(11, 143, 42, 0.08);
-    --bg-effect-b:        rgba(15, 138, 183, 0.08);
+    --bg-effect-a:        rgba(11, 143, 42, 0.30);
+    --bg-effect-b:        rgba(15, 138, 183, 0.12);
     --bg-overlay-opacity: 0;
     --bg-grid-opacity:    0;
-    --bg-blur:            80px;
-    --bg-motion-scale:    1.08;
+    --bg-blur:            56px;
+    --bg-motion-scale:    1.10;
 }
 
 *,
@@ -131,9 +131,9 @@ body::after {
 .site-header {
     position: sticky;
     top: 0;
-    backdrop-filter: blur(14px);
-    background: rgba(255, 255, 255, 0.84);
-    border-bottom: 1px solid rgba(16, 32, 51, 0.08);
+    backdrop-filter: blur(18px);
+    background: rgba(8, 18, 12, 0.82);
+    border-bottom: 1px solid rgba(11, 143, 42, 0.18);
     opacity: 0;
     transform: translateY(-18px);
     transition: opacity 0.7s var(--motion-curve), transform 0.7s var(--motion-curve);
@@ -216,7 +216,7 @@ body.is-loaded .site-header {
 }
 
 .brand-text span:first-child {
-    color: #102033;
+    color: #e8f5ee;
 }
 
 .brand-text span:last-child {
@@ -233,7 +233,7 @@ body.is-loaded .site-header {
 
 .site-nav a {
     text-decoration: none;
-    color: var(--muted);
+    color: #8fa89a;
     font-size: 0.98rem;
     font-weight: 600;
     padding: 0.75rem 0.95rem;
@@ -260,10 +260,10 @@ body.is-loaded .site-header {
 
 .site-nav a:hover,
 .site-nav a.is-active {
-    color: var(--text);
-    background: rgba(11, 143, 42, 0.08);
+    color: #e2f5e8;
+    background: rgba(11, 143, 42, 0.18);
     transform: translateY(-1px);
-    box-shadow: 0 12px 18px rgba(11, 143, 42, 0.08);
+    box-shadow: 0 8px 18px rgba(11, 143, 42, 0.15);
 }
 
 .site-nav a:hover::after,
@@ -387,8 +387,8 @@ form {
     gap: 0.5rem;
     padding: 0.45rem 0.85rem;
     border-radius: 999px;
-    background: rgba(11, 143, 42, 0.08);
-    color: var(--green-deep);
+    background: rgba(11, 143, 42, 0.18);
+    color: #22c55e;
     font-size: 0.88rem;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -739,10 +739,11 @@ main > h2 {
     font-size: clamp(2rem, 5vw, 3.8rem);
     line-height: 1.04;
     letter-spacing: -0.05em;
+    color: #f1f5f9;
 }
 
 .section-heading p {
-    color: var(--muted);
+    color: #8fa89a;
     font-size: 1.08rem;
     line-height: 1.65;
     max-width: 720px;
@@ -1249,13 +1250,13 @@ form .btn {
     gap: 1.5rem;
     padding: 1.25rem 1.5rem;
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.78);
-    border: 1px solid rgba(16, 32, 51, 0.08);
-    box-shadow: 0 12px 34px rgba(16, 32, 51, 0.06);
+    background: rgba(10, 22, 14, 0.75);
+    border: 1px solid rgba(11, 143, 42, 0.15);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
 }
 
 .footer-copy {
-    color: var(--muted);
+    color: #4a6355;
     font-size: 0.95rem;
 }
 
@@ -1267,12 +1268,12 @@ form .btn {
 
 .footer-links a {
     text-decoration: none;
-    color: var(--muted);
+    color: #5a7a68;
     font-weight: 600;
 }
 
 .footer-links a:hover {
-    color: var(--green-deep);
+    color: #22c55e;
 }
 
 @media (max-width: 900px) {
@@ -1430,6 +1431,25 @@ form .btn {
 }
 .stat-card.accent-flame .stat-meter-fill {
     background: linear-gradient(90deg, #d93b2b, #f06543);
+}
+
+/* Neutral/muted streak card when streak = 0 */
+.stat-card--muted::before {
+    background: rgba(255,255,255,0.06) !important;
+}
+.stat-card--muted .stat-icon {
+    background: rgba(255,255,255,0.06) !important;
+    color: #4a5568 !important;
+}
+.stat-card--muted .stat-value {
+    color: #4a5568;
+}
+.stat-card--muted .stat-label {
+    color: #4a5568;
+}
+.stat-card--muted .stat-meter-fill {
+    background: rgba(255,255,255,0.08) !important;
+    width: 0 !important;
 }
 
 .stat-card.accent-purple::before {
@@ -1769,38 +1789,73 @@ form .btn {
     margin: 0 0 0.5rem;
     font-size: 1.2rem;
     letter-spacing: -0.03em;
+    color: #e2f5e8;
 }
 
 .workout-output-panel > p {
-    color: var(--muted);
+    color: #6b8a75;
     margin: 0 0 1.25rem;
     font-size: 0.95rem;
 }
 
 .workout-empty-state {
-    padding: 1.2rem 1.25rem;
-    border-radius: 20px;
-    border: 1px dashed rgba(16, 32, 51, 0.14);
-    background: rgba(246, 251, 248, 0.97);
-    display: grid;
-    gap: 0.35rem;
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
     margin-bottom: 1rem;
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.workout-empty-state .empty-state-icon {
+    width: 52px;
+    height: 52px;
+    color: rgba(34, 197, 94, 0.3);
+    margin-bottom: 0.4rem;
+}
+
+.workout-empty-state .empty-state-icon svg {
+    width: 100%;
+    height: 100%;
 }
 
 .workout-output-panel.is-generating .workout-empty-state {
-    opacity: 0.72;
-    transform: scale(0.985);
-    border-color: rgba(15, 138, 183, 0.18);
+    opacity: 0.4;
+    transform: scale(0.98);
+    pointer-events: none;
+}
+
+/* Skeleton shimmer rows shown during plan generation */
+.workout-output-panel.is-generating::after {
+    content: '';
+    display: block;
+    height: 120px;
+    border-radius: 12px;
+    background: linear-gradient(90deg,
+        rgba(255,255,255,0.04) 25%,
+        rgba(255,255,255,0.10) 50%,
+        rgba(255,255,255,0.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmerBar 1.4s infinite;
+    margin-top: 0.5rem;
 }
 
 .workout-empty-state strong {
     font-size: 1rem;
+    color: #c4d4cc;
 }
 
 .workout-empty-state span {
-    color: var(--muted);
+    color: #5a7466;
     line-height: 1.55;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
+    max-width: 28ch;
 }
 
 .generated-plan-panel[hidden] {
@@ -2400,9 +2455,17 @@ form .btn {
 
 .path-card.is-selected {
     border-color: var(--green);
-    background: var(--green-soft);
-    box-shadow: 0 14px 30px rgba(11, 143, 42, 0.14);
+    background: rgba(11, 143, 42, 0.28);
+    box-shadow: 0 14px 30px rgba(11, 143, 42, 0.22), inset 0 0 0 1px rgba(34, 197, 94, 0.25);
     transform: translateY(-3px) scale(1.01);
+}
+
+.path-card.is-selected .path-card-label {
+    color: #e2f5e8;
+}
+
+.path-card.is-selected .path-card-desc {
+    color: #8fa89a;
 }
 
 .path-card-icon {
@@ -2457,7 +2520,9 @@ form .btn {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     box-shadow: 0 4px 14px rgba(8, 31, 20, 0.05);
-    position: relative;
+    position: sticky;
+    top: 5.5rem;
+    z-index: 10;
     overflow: hidden;
 }
 
@@ -3439,6 +3504,84 @@ form .btn {
     letter-spacing: -0.03em;
 }
 
+/* ── Settings info icon rows ─────────────────────────────────────────────── */
+.settings-info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.settings-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: background 180ms ease, border-color 180ms ease;
+}
+
+.settings-info-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.settings-info-row--accent {
+    background: rgba(11, 143, 42, 0.08);
+    border-color: rgba(11, 143, 42, 0.18);
+}
+
+.settings-info-row--accent:hover {
+    background: rgba(11, 143, 42, 0.12);
+    border-color: rgba(11, 143, 42, 0.28);
+}
+
+.sir-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #22c55e;
+}
+
+.settings-info-row--accent .sir-icon {
+    background: rgba(11, 143, 42, 0.15);
+    color: #4ade80;
+}
+
+.sir-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.sir-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #e2f5e8;
+    letter-spacing: -0.01em;
+}
+
+.sir-desc {
+    font-size: 0.8rem;
+    color: #6b8a75;
+    line-height: 1.5;
+}
+
+.sir-desc a {
+    color: #22c55e;
+    text-decoration: none;
+}
+.sir-desc a:hover {
+    text-decoration: underline;
+}
+
 .info-tile {
     padding: 1.15rem;
     border-radius: 16px;
@@ -3635,13 +3778,18 @@ form .btn {
 }
 
 .save-status {
-    min-height: 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     margin: 0.85rem 0 0;
-    font-size: 0.9rem;
-    color: var(--green-deep);
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
     opacity: 0;
-    transform: translateY(10px);
-    transition: opacity var(--motion-hover), transform var(--motion-hover);
+    transform: translateY(8px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    pointer-events: none;
 }
 
 .save-status.is-visible {
@@ -3650,10 +3798,47 @@ form .btn {
 }
 
 .save-status.is-error {
-    color: #c2410c;
+    background: rgba(194, 65, 12, 0.15);
+    border: 1px solid rgba(194, 65, 12, 0.3);
+    color: #f97316;
 }
 
 .save-status.is-success {
+    background: rgba(11, 143, 42, 0.18);
+    border: 1px solid rgba(11, 143, 42, 0.35);
+    color: #22c55e;
+}
+
+.page-alert {
+    display: block;
+    margin: 0 0 1.25rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(194, 65, 12, 0.18);
+    background: rgba(255, 247, 237, 0.94);
+    color: #9a3412;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    box-shadow: 0 12px 26px rgba(154, 52, 18, 0.08);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--motion-hover), transform var(--motion-hover);
+}
+
+.page-alert.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-alert.is-error {
+    border-color: rgba(194, 65, 12, 0.18);
+    background: rgba(255, 247, 237, 0.94);
+    color: #9a3412;
+}
+
+.page-alert.is-success {
+    border-color: rgba(11, 143, 42, 0.16);
+    background: rgba(240, 253, 244, 0.94);
     color: var(--green-deep);
 }
 
@@ -4790,12 +4975,12 @@ form .btn {
 }
 
 .period-btn {
-    padding: 0.3rem 0.85rem;
+    padding: 0.5rem 1.2rem;
     border-radius: 999px;
-    border: 1.5px solid rgba(16, 32, 51, 0.16);
-    background: var(--surface-strong);
-    color: var(--muted);
-    font-size: 0.8rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #8fa89a;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     transition: border-color var(--motion-hover), background-color var(--motion-hover),
@@ -4803,15 +4988,16 @@ form .btn {
 }
 
 .period-btn:hover {
-    border-color: rgba(11, 143, 42, 0.35);
-    background: var(--green-soft);
-    color: var(--green-deep);
+    border-color: rgba(34, 197, 94, 0.4);
+    background: rgba(11, 143, 42, 0.18);
+    color: #22c55e;
 }
 
 .period-btn.is-active {
     border-color: var(--green);
     background: var(--green);
     color: #ffffff;
+    box-shadow: 0 4px 14px rgba(11, 143, 42, 0.35);
 }
 
 /* ── Insight card ────────────────────────────────────────────────── */
@@ -4905,17 +5091,12 @@ form .btn {
    Layer 1 = body background  |  Layer 2 = body::before  |  Layer 3 = body::after
    ========================================================================== */
 
-/* ── Home — balanced, soft curiosity ──────────────────────────────── */
+/* ── Home ─────────────────────────────────────────────────────────── */
 .page-home {
-    --bg-primary:   #eaf7ef;
-    --bg-secondary: #f4faff;
-    --bg-accent:    #edf5ff;
-    --bg-effect-a:  rgba(11, 143, 42, 0.10);
-    --bg-effect-b:  rgba(15, 138, 183, 0.09);
-    --bg-blur:      88px;
-    --bg-overlay-opacity: 0.45;
-    --bg-grid-opacity:    0.018;
-    --bg-motion-scale:    1.07;
+    --bg-effect-a:  rgba(11, 143, 42, 0.28);
+    --bg-effect-b:  rgba(15, 138, 183, 0.10);
+    --bg-blur:      60px;
+    --bg-motion-scale: 1.08;
 }
 
 /* ── Workout — highest energy, darkest palette ────────────────────── */
@@ -4931,38 +5112,31 @@ form .btn {
     --bg-motion-scale:    1.10;
 }
 
-/* Adapt text for dark workout background (page-intro reads directly on body) */
-.page-workout .page-intro {
+/* All pages use dark background — adapt page-intro text globally */
+.page-intro {
     color: #ddeae2;
 }
-.page-workout .page-intro .eyebrow {
-    color: rgba(11, 143, 42, 0.85);
+.page-intro .eyebrow {
+    color: rgba(34, 197, 94, 0.9);
+}
+.page-intro .page-lead {
+    color: #8fa89a;
 }
 
-/* ── Progress — analytical, structured ───────────────────────────── */
+/* ── Progress ────────────────────────────────────────────────────── */
 .page-progress {
-    --bg-primary:   #f1f8f4;
-    --bg-secondary: #f6fafe;
-    --bg-accent:    #f0f6fb;
-    --bg-effect-a:  rgba(11, 143, 42, 0.06);
-    --bg-effect-b:  rgba(15, 138, 183, 0.07);
-    --bg-blur:      100px;
-    --bg-overlay-opacity: 0.55;
-    --bg-grid-opacity:    0.028;
-    --bg-motion-scale:    1.04;
+    --bg-effect-a:  rgba(11, 143, 42, 0.22);
+    --bg-effect-b:  rgba(15, 138, 183, 0.14);
+    --bg-blur:      64px;
+    --bg-motion-scale: 1.06;
 }
 
-/* ── Map — minimal, clear, low noise ─────────────────────────────── */
+/* ── Map ─────────────────────────────────────────────────────────── */
 .page-map {
-    --bg-primary:   #f2f5f3;
-    --bg-secondary: #f5f7f9;
-    --bg-accent:    #f3f6f8;
-    --bg-effect-a:  rgba(11, 143, 42, 0.04);
-    --bg-effect-b:  rgba(15, 138, 183, 0.04);
-    --bg-blur:      100px;
-    --bg-overlay-opacity: 0;
-    --bg-grid-opacity:    0;
-    --bg-motion-scale:    1.02;
+    --bg-effect-a:  rgba(11, 143, 42, 0.18);
+    --bg-effect-b:  rgba(15, 138, 183, 0.08);
+    --bg-blur:      72px;
+    --bg-motion-scale: 1.04;
 }
 
 /* ==========================================================================
@@ -5011,5 +5185,250 @@ form .btn {
     }
     .page-workout.state-active::before {
         animation: none;
+    }
+}
+
+/* ── Workout Calendar Widget ──────────────────────────────────────────────── */
+.cal-widget {
+    background: #0e1117;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    color: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.cal-widget::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(11,143,42,0.14) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Header */
+.cal-widget__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.cal-widget__title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.cal-widget__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #22c55e;
+}
+
+.cal-widget__month {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: -0.03em;
+}
+
+/* Navigation arrows */
+.cal-widget__nav {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.cal-nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 180ms, border-color 180ms, color 180ms;
+}
+
+.cal-nav-btn:hover {
+    background: rgba(11,143,42,0.22);
+    border-color: rgba(34,197,94,0.4);
+    color: #22c55e;
+}
+
+/* Legend */
+.cal-widget__legend {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 0.9rem;
+    font-size: 0.76rem;
+    color: #64748b;
+}
+
+.cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.cal-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cal-legend-dot--workout {
+    background: #0b8f2a;
+    box-shadow: 0 0 7px rgba(11,143,42,0.7);
+}
+
+.cal-legend-dot--today {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+}
+
+/* Day-of-week header row */
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #22c55e;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Grid */
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* Base cell */
+.cal-cell {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 180ms;
+}
+
+.cal-cell__num {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+/* Today ring */
+.cal-cell--today .cal-cell__num,
+.cal-cell--today .cal-cell__day {
+    color: #f1f5f9;
+    font-weight: 700;
+}
+
+.cal-cell--today {
+    outline: 2px solid rgba(226,232,240,0.75);
+    outline-offset: -2px;
+}
+
+/* Workout cell */
+.cal-cell--workout {
+    background: rgba(11,143,42,0.07);
+    border: 1px solid rgba(11,143,42,0.2);
+}
+
+.cal-cell--workout:hover {
+    transform: translateY(-2px);
+    background: rgba(11,143,42,0.14);
+}
+
+/* Glowing icon bubble */
+.cal-cell__icon-wrap {
+    width: 44%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, rgba(34,197,94,0.22), rgba(11,143,42,0.08));
+    box-shadow:
+        0 0 10px rgba(11,143,42,0.45),
+        0 0 22px rgba(11,143,42,0.14),
+        inset 0 1px 1px rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.cal-cell__icon-wrap svg {
+    width: 48%;
+    height: 48%;
+    stroke: #22c55e;
+    stroke-width: 2;
+}
+
+.cal-cell__day {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #6db887;
+    line-height: 1;
+}
+
+/* Footer stat */
+.cal-widget__footer {
+    margin-top: 1.1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+}
+
+.cal-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+}
+
+.cal-stat__value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #22c55e;
+    letter-spacing: -0.04em;
+}
+
+.cal-stat__label {
+    font-size: 0.8rem;
+    color: #4a5568;
+}
+
+@media (max-width: 480px) {
+    .cal-widget {
+        padding: 1.25rem;
+    }
+    .cal-widget__month {
+        font-size: 1.05rem;
+    }
+    .cal-cell__icon-wrap {
+        width: 65%;
+    }
+    .cal-cell__day {
+        display: none;
     }
 }
