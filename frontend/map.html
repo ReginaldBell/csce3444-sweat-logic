@@ -42,8 +42,23 @@
 
                     <!-- Floor switcher -->
                     <div class="floor-switcher">
-                        <button class="floor-btn active" data-floor="1">Main Floor</button>
-                        <button class="floor-btn"        data-floor="2">2nd Floor</button>
+                        <button class="floor-btn active" data-floor="1">Main Floor <span class="floor-zone-count">15 zones</span></button>
+                        <button class="floor-btn"        data-floor="2">2nd Floor <span class="floor-zone-count">3 zones</span></button>
+                    </div>
+
+                    <!-- Zone status legend -->
+                    <div class="zone-status-legend" aria-label="Zone occupancy legend">
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--open"></span>Open
+                        </span>
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--moderate"></span>Moderate
+                        </span>
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--busy"></span>Busy
+                        </span>
+                        <span class="zsl-sep">—</span>
+                        <span class="zsl-note">Estimates only, not live data</span>
                     </div>
 
                     <!-- Zone grid — populated by renderMap() -->
@@ -134,6 +149,7 @@
         </footer>
     </div><!-- /.site-shell -->
 
+    <script src="js/config.js"></script>
     <!-- ── Module bootstrap ──────────────────────────────────────────────── -->
     <script type="module">
         import { seedStatus, loadSavedReports } from './js/map/simulate.js';

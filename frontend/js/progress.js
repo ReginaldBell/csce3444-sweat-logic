@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    const backendStatus = document.getElementById('progress-backend-status');
 
     // ── SVG icon map ────────────────────────────────────────────────
     const TYPE_ICONS = {
@@ -464,6 +465,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         allWorkouts = await apiFetch('/workouts');
+        if (typeof window.setAlertState === 'function') {
+            window.setAlertState(backendStatus, '');
+        }
         const metrics = typeof window.getWorkoutMetrics === 'function'
             ? window.getWorkoutMetrics(allWorkouts)
             : { currentStreak: 0, longestStreak: 0 };
@@ -481,6 +485,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPage(filterByPeriod(allWorkouts, activePeriod), allWorkouts, metrics);
 
     } catch (err) {
-        console.error('Failed to load progress data:', err);
+        if (typeof window.setAlertState === 'function') {
+            window.setAlertState(
+                backendStatus,
+                typeof window.getRequestErrorMessage === 'function'
+                    ? window.getRequestErrorMessage(err)
+                    : 'Could not reach the server. Check that the backend is running and try again.',
+                'error'
+            );
+        }
     }
 });

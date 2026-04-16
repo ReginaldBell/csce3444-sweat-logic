@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE = 'http://localhost:8080/api';
     const USER_ID_KEY = 'sweatlogic-user-id';
     const PROFILE_KEY = 'sweatlogic-profile';
     const SETTINGS_EVENT = 'sweatlogic:settings-updated';
     const form = document.getElementById('settings-form');
     const status = document.getElementById('settings-status');
+    const backendStatus = document.getElementById('settings-backend-status');
     const goalOptions = new Set(['strength', 'cardio', 'endurance']);
     const levelOptions = new Set(['beginner', 'intermediate', 'advanced']);
 
@@ -25,6 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         status.classList.add('is-visible', tone === 'error' ? 'is-error' : 'is-success');
+    }
+
+    function setBackendStatus(error, fallback = 'Could not reach the server. Check that the backend is running and try again.') {
+        if (typeof window.setAlertState !== 'function') {
+            return;
+        }
+
+        const message = typeof window.getRequestErrorMessage === 'function'
+            ? window.getRequestErrorMessage(error, fallback)
+            : fallback;
+
+        window.setAlertState(backendStatus, message, 'error');
     }
 
     async function requestApi(path, options = {}) {
@@ -133,6 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadBackendUser()
         .then((user) => {
+            if (typeof window.setAlertState === 'function') {
+                window.setAlertState(backendStatus, '');
+            }
             if (!user) {
                 return;
             }
@@ -149,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             broadcastSettings(mergedSettings);
         })
         .catch((error) => {
-            console.warn('Unable to load backend user settings.', error);
+            setBackendStatus(error, 'Could not reach the server. Using your locally saved settings for now.');
         });
 
     form.addEventListener('submit', async (e) => {
@@ -210,9 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem(USER_ID_KEY, String(savedUser.id));
             }
 
+            if (typeof window.setAlertState === 'function') {
+                window.setAlertState(backendStatus, '');
+            }
             setStatus('Settings saved locally and synced with the workout recommendation builder.');
         } catch (error) {
-            console.warn('Unable to sync settings to backend.', error);
+            setBackendStatus(error, 'Could not reach the server. Your settings were still saved locally.');
             setStatus('Settings saved locally. Backend sync was unavailable, so workout defaults still use your current choices.', 'success');
         } finally {
             if (submitButton) {

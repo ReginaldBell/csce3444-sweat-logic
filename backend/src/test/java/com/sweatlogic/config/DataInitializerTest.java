@@ -89,7 +89,7 @@ class DataInitializerTest {
         dataInitializer.run();
 
         ArgumentCaptor<Exercise> exerciseCaptor = ArgumentCaptor.forClass(Exercise.class);
-        verify(exerciseRepository, times(24)).save(exerciseCaptor.capture());
+        verify(exerciseRepository, times(49)).save(exerciseCaptor.capture());
         assertThat(exerciseCaptor.getAllValues())
                 .extracting(Exercise::getName)
                 .doesNotContain("Bench Press");

@@ -49,6 +49,28 @@
             color: #1b1b1b;
             margin-bottom: 0.4rem;
         }
+        .rec-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .rec-filters label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+        .rec-filters select {
+            font-size: 0.88rem;
+            padding: 0.3rem 0.6rem;
+            border: 1.5px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+        }
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -95,6 +117,23 @@
 
             <a href="workout.html" class="back-link">&#8592; Back to Workout</a>
 
+            <div class="rec-filters">
+                <label for="rec-goal">Goal
+                    <select id="rec-goal">
+                        <option value="strength">Strength</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="endurance">Endurance</option>
+                    </select>
+                </label>
+                <label for="rec-level">Level
+                    <select id="rec-level">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </label>
+            </div>
+
             <div class="dash-panel" id="rec-container">
                 <div class="rec-status" id="rec-status">
                     <strong>Loading exercises&hellip;</strong>
@@ -139,13 +178,34 @@
             document.title = label + ' Recommendations - SweatLogic';
             document.getElementById('rec-part-label').textContent = label;
 
-            fetch(`/api/recommendations/generate/${part}?goal=strength&level=intermediate`)
-                .then(res => {
-                    if (!res.ok) throw new Error('Server returned ' + res.status);
-                    return res.json();
-                })
-                .then(plan => renderPlan(plan))
-                .catch(err => showError(err));
+            const goalSelect  = document.getElementById('rec-goal');
+            const levelSelect = document.getElementById('rec-level');
+
+            // Pre-fill from localStorage if settings were saved
+            const savedGoal  = localStorage.getItem('goal');
+            const savedLevel = localStorage.getItem('level');
+            if (savedGoal  && goalSelect.querySelector(`option[value="${savedGoal}"]`))  goalSelect.value  = savedGoal;
+            if (savedLevel && levelSelect.querySelector(`option[value="${savedLevel}"]`)) levelSelect.value = savedLevel;
+
+            function loadPlan() {
+                const goal  = goalSelect.value;
+                const level = levelSelect.value;
+                document.getElementById('rec-status').innerHTML = '<strong>Loading exercises&hellip;</strong>Fetching your workout plan from the server.';
+                document.getElementById('rec-status').hidden = false;
+                document.getElementById('rec-grid').hidden = true;
+                fetch(`/api/recommendations/generate/${part}?goal=${goal}&level=${level}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Server returned ' + res.status);
+                        return res.json();
+                    })
+                    .then(plan => renderPlan(plan))
+                    .catch(err => showError(err));
+            }
+
+            goalSelect.addEventListener('change', loadPlan);
+            levelSelect.addEventListener('change', loadPlan);
+
+            loadPlan();
         });
 
         function renderPlan(plan) {

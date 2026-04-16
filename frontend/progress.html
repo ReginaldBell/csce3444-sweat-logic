@@ -33,6 +33,7 @@
                 <h2 class="page-title">Analyze Your <span class="gradient-text">Performance</span></h2>
                 <p class="page-lead">Visualize your workout trends, track total activity, and understand your training patterns over time. All data comes from your logged workouts.</p>
             </section>
+            <p id="progress-backend-status" class="page-alert" role="alert" aria-live="polite" hidden></p>
 
             <!-- Period filter -->
             <div class="period-filter" id="period-filter" role="group" aria-label="Time period">
@@ -211,12 +212,13 @@
                     <a href="map.html">Map</a>
                     <a href="settings.html">Settings</a>
                 </div>
-                <p class="footer-copy">Progress remains based on workout history rather than new unsupported endpoints.</p>
+                <p class="footer-copy">Visualize your journey — every workout counted, every trend surfaced.</p>
             </div>
         </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/progress.js"></script>
 </body>
