@@ -388,6 +388,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (currentStreakEl) animateCountUp(currentStreakEl, metrics.currentStreak);
         if (longestStreakEl) animateCountUp(longestStreakEl, metrics.longestStreak);
 
+        // Streak progress bar
+        const streakFill = document.getElementById('pg-streak-fill');
+        if (streakFill) {
+            const pct = metrics.longestStreak > 0
+                ? Math.min((metrics.currentStreak / metrics.longestStreak) * 100, 100)
+                : (metrics.currentStreak > 0 ? 100 : 0);
+            streakFill.style.width = pct + '%';
+        }
+
+        // Hours sub-label in workouts card
+        const hoursSub = document.getElementById('pg-hours-sub');
+        if (hoursSub) hoursSub.textContent = hours + ' hrs total';
+
         // Week-over-week deltas (compare to previous 7-day window)
         const now        = Date.now();
         const thisWeek   = all.filter((w) => now - new Date(w.date).getTime() < 7 * 86400000);
@@ -407,22 +420,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const thisWeekAvg = thisWeek.length > 0 ? Math.round(thisWeekMin / thisWeek.length) : 0;
         const lastWeekAvg = lastWeek.length > 0 ? Math.round(lastWeekMin / lastWeek.length) : 0;
         injectDelta('progress-avg-session-card', thisWeekAvg, lastWeekAvg);
-
-        // Progress meters
-        const summaryCards  = document.querySelectorAll('.progress-stat-row .stat-card');
-        const avgSession    = filtered.length > 0 ? Math.round(totalMin / filtered.length) : 0;
-        const cardProgress  = [
-            Math.min(filtered.length / 40, 1),
-            Math.min(totalMin / 1200, 1),
-            Math.min(avgSession / 90, 1),
-            Math.min(metrics.currentStreak / 7, 1),
-            Math.min(metrics.longestStreak / 14, 1),
-        ];
-        summaryCards.forEach((card, i) => {
-            if (typeof window.setMotionProgress === 'function') {
-                window.setMotionProgress(card, cardProgress[i] || 0);
-            }
-        });
 
         // Charts
         renderCharts(filtered);
