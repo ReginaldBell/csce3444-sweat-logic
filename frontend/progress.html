@@ -42,86 +42,54 @@
                 <button class="period-btn is-active" data-period="0">All time</button>
             </div>
 
-            <!-- Top Summary Stats -->
-            <div class="progress-stat-row">
-                <div class="stat-card" id="progress-total-workouts-card">
-                    <div class="stat-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                    </div>
-                    <span class="stat-value" id="progress-total-workouts">--</span>
-                    <span class="stat-label">Total Workouts</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-                <div class="stat-card accent-blue" id="progress-total-hours-card">
-                    <div class="stat-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <span class="stat-value" id="progress-total-hours">--</span>
-                    <span class="stat-label">Total Hours</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-                <div class="stat-card accent-orange" id="progress-avg-session-card">
-                    <div class="stat-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    </div>
-                    <span class="stat-value" id="progress-avg-session">--</span>
-                    <span class="stat-label">Avg Session (min)</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-                <div class="stat-card accent-flame" id="progress-current-streak-card">
-                    <div class="stat-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                    </div>
-                    <span class="stat-value" id="progress-current-streak">0</span>
-                    <span class="stat-label">Current Streak</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-                <div class="stat-card accent-purple" id="progress-longest-streak-card">
-                    <div class="stat-icon" aria-hidden="true">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-                    </div>
-                    <span class="stat-value" id="progress-longest-streak">0</span>
-                    <span class="stat-label">Longest Streak</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-            </div>
-
             <!-- Insight card -->
             <div class="insight-card" id="insight-card" hidden>
-                <div class="insight-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
-                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
-                        <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
-                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
-                    </svg>
-                    Insight
-                </div>
+                <div class="insight-icon">&#10022;</div>
                 <p id="insight-text"></p>
             </div>
 
-            <!-- Charts Grid -->
-            <section id="progress-charts" class="progress-grid">
-                <div class="chart-panel">
-                    <h3>Workouts Over Time</h3>
-                    <p class="chart-subtitle">Number of sessions per week</p>
-                    <div class="chart-frame">
-                        <canvas id="workouts-chart"></canvas>
+            <!-- Top metrics: streak + workouts -->
+            <div class="pg-stat-grid pg-stat-grid--2">
+                <div class="pg-card" id="progress-current-streak-card">
+                    <p class="pg-label">Current streak</p>
+                    <p class="pg-big-num">
+                        <span id="progress-current-streak">0</span>
+                        <span class="pg-num-unit">days</span>
+                    </p>
+                    <div class="pg-streak-bar">
+                        <div class="pg-streak-fill" id="pg-streak-fill"></div>
+                    </div>
+                    <p class="pg-sub-muted">Longest: <span id="progress-longest-streak">0</span> days</p>
+                </div>
+                <div class="pg-card" id="progress-total-workouts-card">
+                    <p class="pg-label">Total workouts</p>
+                    <p class="pg-big-num" id="progress-total-workouts">--</p>
+                    <p class="pg-sub-muted" id="pg-hours-sub">-- hrs total</p>
+                </div>
+            </div>
+
+            <!-- Weekly trend -->
+            <div class="pg-card" id="progress-charts">
+                <p class="pg-section-label">Weekly trend</p>
+                <div class="pg-chart-row">
+                    <div class="pg-chart-col">
+                        <p class="pg-chart-sub">Sessions</p>
+                        <div class="chart-frame"><canvas id="workouts-chart"></canvas></div>
+                    </div>
+                    <div class="pg-divider-v"></div>
+                    <div class="pg-chart-col">
+                        <p class="pg-chart-sub">Duration (min)</p>
+                        <div class="chart-frame"><canvas id="duration-chart"></canvas></div>
                     </div>
                 </div>
-                <div class="chart-panel">
-                    <h3>Duration Over Time</h3>
-                    <p class="chart-subtitle">Total minutes per week</p>
-                    <div class="chart-frame">
-                        <canvas id="duration-chart"></canvas>
-                    </div>
-                </div>
-            </section>
+            </div>
 
             <!-- Activity Heatmap -->
-            <div class="chart-panel heatmap-panel" id="heatmap-panel">
-                <h3>Activity Heatmap</h3>
-                <p class="chart-subtitle">Workout frequency by week</p>
+            <div class="pg-card" id="heatmap-panel">
+                <div class="pg-heatmap-header">
+                    <p class="pg-section-label" style="margin:0;">Activity Heatmap</p>
+                </div>
+                <p class="pg-chart-sub">Workout frequency by day &mdash; click future cells to plan</p>
                 <div class="heatmap-grid" id="heatmap-grid" aria-label="Workout activity heatmap"></div>
                 <div class="heatmap-legend" aria-hidden="true">
                     <span>Less</span>
@@ -138,8 +106,8 @@
                 </div>
             </div>
 
-            <!-- Workout Breakdown -->
-            <div class="progress-grid" style="margin-top: 1.5rem;">
+            <!-- Workout Breakdown + History -->
+            <div class="progress-grid">
                 <div class="breakdown-panel">
                     <h3>Workout Type Breakdown</h3>
                     <div id="type-breakdown">
@@ -195,6 +163,21 @@
                     <ul class="history-list" id="history-list">
                         <li style="color: var(--muted); font-size: 0.92rem;">Log workouts to see your history here.</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Bottom metrics: avg session + total hours -->
+            <div class="pg-stat-grid pg-stat-grid--2">
+                <div class="pg-metric-card" id="progress-avg-session-card">
+                    <p class="pg-label">Avg session</p>
+                    <p class="pg-big-num pg-big-num--sm">
+                        <span id="progress-avg-session">--</span>
+                        <span class="pg-num-unit">min</span>
+                    </p>
+                </div>
+                <div class="pg-metric-card" id="progress-total-hours-card">
+                    <p class="pg-label">Total hours</p>
+                    <p class="pg-big-num pg-big-num--sm" id="progress-total-hours">--</p>
                 </div>
             </div>
         </main>
