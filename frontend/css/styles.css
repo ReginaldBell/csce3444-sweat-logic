@@ -5021,20 +5021,24 @@ form .btn {
     border-color: var(--border);
 }
 
+/* for images for each body part recommendation exercise */
 .rec-grid .exercise-card {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 1.5rem;
     background: var(--surface-strong);
     box-shadow: var(--shadow);
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 80px;
+    overflow: hidden;
+}
 
-    transform: none;
-    transition: none;
-    cursor: default;
+.exercise-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+}
+
+.exercise-card h4 {
+    padding: 0.75rem 1rem;
+    margin: 0;
+    font-size: 1.1rem;
 }

@@ -12,30 +12,7 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.25rem;
             margin-top: 1.5rem;
-        }
-        .exercise-card {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .exercise-card h4 {
-            margin: 0;
-            font-size: 1.1rem;
-            letter-spacing: -0.02em;
-        }
-        .exercise-meta {
-            margin: 0;
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--green-deep);
-        }
-        .exercise-instructions {
-            margin: 0;
-            font-size: 0.92rem;
-            color: var(--muted);
-            line-height: 1.55;
+            align-items: start;  /* ← add this */
         }
         .rec-status {
             text-align: center;
@@ -64,7 +41,7 @@
         }
     </style>
 </head>
-<body class="page-home">
+<body class="page-home is-loaded">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -125,52 +102,53 @@
     <script>
         const EXERCISE_DATA = {
             chest: [
-                { name: "Barbell Bench Press"},
-                { name: "Incline Dumbbell Press"},
-                { name: "Chest Dips"},
-                { name: "Push Ups"},
-                { name: "Cable Crossovers"},
-                { name: "Chest Fly Machine"}
+                { name: "Barbell Bench Press", image: "exercises/Chest-bench.png" },
+                { name: "Incline Dumbbell Press", image: "exercises/Chest-DB inclined .png" },
+                { name: "Chest Dips", image: "exercises/Chest-dips.png" },
+                { name: "Push Ups", image: "exercises/Chest-push ups.png" },
+                { name: "Cable Crossovers", image: "exercises/Chest-Cable Crossovers.png" },
+                { name: "Chest Fly Machine", image: "exercises/Chest-flys.png" }
             ],
             back: [
-                { name: "Pull-ups"},
-                { name: "Bent Over Barbell Rows"},
-                { name: "Lat Pulldowns"},
-                { name: "Seated Rows"},
-                { name: "Deadlift"},
-                { name: "Dumbbell Rows"}
+                { name: "Pull-ups", image: "exercises/Back-pull ups.png" },
+                { name: "Bent Over Barbell Rows", image: "exercises/Back-bent over rows.png" },
+                { name: "Lat Pulldowns", image: "exercises/Back-lat pulldowns.png" },
+                { name: "Seated Rows", image: "exercises/Back-seated rows.png" },
+                { name: "Deadlift", image: "exercises/Back-deadlift.png" },
+                { name: "Dumbbell Rows", image: "exercises/Back-dumbbell rows.png" }
             ],
             legs: [
-                { name: "Barbell Squats"},
-                { name: "Leg Press"},
-                { name: "Calf Raises"},
-                { name: "Romanian Deadlifts"},
-                { name: "Leg Extensions"},
-                { name: "Bulgarian Split Squats"}
+                { name: "Barbell Squats", image: "exercises/Legs-squat.png" },
+                { name: "Leg Press", image: "exercises/Legs-leg press.png" },
+                { name: "Calf Raises", image: "exercises/Legs-calf raises.png" },
+                { name: "Romanian Deadlifts", image: "exercises/Legs-romanian deadlifts.png" },
+                { name: "Leg Extensions", image: "exercises/Legs-leg extensions.png" },
+                { name: "Bulgarian Split Squats", image: "exercises/Legs-bulgarians.png" }
             ],
             arms: [
-                { name: "Dumbbell Bicep Curls"},
-                { name: "Tricep Pushdowns"},
-                { name: "Hammer Curls"},
-                { name: "Lateral Raises"},
-                { name: "Shoulder Press"},
-                { name: "Skull Crushers"}
+                { name: "Dumbbell Bicep Curls", image: "exercises/Arms-dumbbell curls.png" },
+                { name: "Tricep Pushdowns", image: "exercises/Arms-tricep pushdowns.png" },
+                { name: "Hammer Curls", image: "exercises/Arms-hammer curls.png" },
+                { name: "Lateral Raises", image: "exercises/Arms-lat raises.png" },
+                { name: "Shoulder Press", image: "exercises/Arms-shoulder press.png" },
+                { name: "Skull Crushers", image: "exercises/Arms-skull crushers.png" }
             ],
             core: [
-                { name: "Plank"},
-                { name: "Hanging Leg Raises"},
-                { name: "Russian Twists"},
-                { name: "Decline Sit Ups"},
-                { name: "Dead Bugs"},
-                { name: "Mountain Climbers"}
+                { name: "Plank", image: "exercises/Core-plank.png" },
+                { name: "Hanging Leg Raises", image: "exercises/Core-hanging leg raises.png" },
+                { name: "Russian Twists", image: "exercises/Core-russian twist.png" },
+                { name: "Decline Sit Ups", image: "exercises/Core-declined sit ups.png" },
+                { name: "Dead Bugs", image: "exercises/Core-dead bugs.png" },
+                { name: "Mountain Climbers", image: "exercises/Core-mountain climbers.png" }
             ]
         };
+
         const PART_LABELS = {
-            chest: 'Chest',
-            back: 'Back',
-            legs: 'Legs',
-            arms: 'Arms',
-            core: 'Core'
+            chest: "Chest",
+            back: "Back",
+            legs: "Legs",
+            arms: "Arms",
+            core: "Core"
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -199,6 +177,9 @@
 
             grid.innerHTML = plan.exercises.map(ex => `
                 <div class="exercise-card">
+                    <div class="exercise-img-wrapper">
+                        <img src="${ex.image}" alt="${ex.name}" class="exercise-img">
+                    </div>
                     <h4>${ex.name}</h4>
                 </div>
             `).join('');
