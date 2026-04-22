@@ -6,10 +6,10 @@
     <title>Map - SweatLogic</title>
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css?v=6">
-    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/map.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="page-map">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -42,8 +42,23 @@
 
                     <!-- Floor switcher -->
                     <div class="floor-switcher">
-                        <button class="floor-btn active" data-floor="1">Main Floor</button>
-                        <button class="floor-btn"        data-floor="2">2nd Floor</button>
+                        <button class="floor-btn active" data-floor="1">Main Floor <span class="floor-zone-count">15 zones</span></button>
+                        <button class="floor-btn"        data-floor="2">2nd Floor <span class="floor-zone-count">3 zones</span></button>
+                    </div>
+
+                    <!-- Zone status legend -->
+                    <div class="zone-status-legend" aria-label="Zone occupancy legend">
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--open"></span>Open
+                        </span>
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--moderate"></span>Moderate
+                        </span>
+                        <span class="zsl-item">
+                            <span class="zsl-dot zsl-dot--busy"></span>Busy
+                        </span>
+                        <span class="zsl-sep">—</span>
+                        <span class="zsl-note">Estimates only, not live data</span>
                     </div>
 
                     <!-- Zone grid — populated by renderMap() -->
@@ -90,26 +105,27 @@
                 <div class="map-info-card">
                     <h4>Building Hours</h4>
                     <ul class="hours-list">
-                        <li><span>Mon – Fri</span><span>6:00 AM – 11:00 PM</span></li>
-                        <li><span>Saturday</span><span>8:00 AM – 9:00 PM</span></li>
-                        <li><span>Sunday</span><span>10:00 AM – 9:00 PM</span></li>
-                        <li><span>Holidays</span><span>Hours may vary</span></li>
+                        <li><span>Sunday</span><span>12:00 PM – 12:00 AM</span></li>
+                        <li><span>Mon – Thu</span><span>6:00 AM – 12:00 AM</span></li>
+                        <li><span>Friday</span><span>6:00 AM – 10:00 PM</span></li>
+                        <li><span>Saturday</span><span>8:00 AM – 7:00 PM</span></li>
+                        <li><span>Spring Break</span><span>Reduced hours</span></li>
                     </ul>
                 </div>
 
                 <div class="map-info-card">
                     <h4>Tips &amp; Info</h4>
                     <div class="map-tip">
+                        <strong>Spring Break (Mar 7–14)</strong>
+                        <span>Mon–Fri 6 AM–8 PM &middot; Sat 8 AM–6 PM &middot; Sun 12 PM–8 PM</span>
+                    </div>
+                    <div class="map-tip">
                         <strong>Peak Hours</strong>
                         <span>4 PM – 7 PM weekdays. Mornings before 9 AM are typically less busy.</span>
                     </div>
                     <div class="map-tip">
-                        <strong>Lockers</strong>
-                        <span>Day-use lockers near the entrance. Bring your own lock.</span>
-                    </div>
-                    <div class="map-tip">
-                        <strong>Occupancy Badges</strong>
-                        <span>Zone status is estimated — not live data.</span>
+                        <strong>Facility Hours</strong>
+                        <span>Pool, Climbing Wall, Courts &amp; Tennis have separate schedules — check the Rec Center website.</span>
                     </div>
                 </div>
             </div><!-- /.map-below -->
@@ -134,6 +150,7 @@
         </footer>
     </div><!-- /.site-shell -->
 
+    <script src="js/config.js"></script>
     <!-- ── Module bootstrap ──────────────────────────────────────────────── -->
     <script type="module">
         import { seedStatus, loadSavedReports } from './js/map/simulate.js';

@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="settings-page">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -33,6 +33,7 @@
                 <h2 class="page-title">Manage Your <span class="gradient-text">Settings</span></h2>
                 <p class="page-lead">Configure your profile basics and preferences. Backend-supported fields save to local storage. Planned features are marked accordingly.</p>
             </section>
+            <p id="settings-backend-status" class="page-alert" role="alert" aria-live="polite" hidden></p>
 
             <div class="settings-layout">
                 <!-- Left: Settings Form -->
@@ -58,25 +59,24 @@
                     <div class="settings-section">
                         <div class="settings-section-header">
                             <h4>Fitness Preferences</h4>
-                            <span class="settings-badge planned">Planned</span>
+                            <span class="settings-badge live">Saved Locally</span>
                         </div>
 
                         <label for="goal-select">Primary Goal</label>
-                        <select id="goal-select" name="goal" disabled>
-                            <option value="general">General Fitness</option>
+                        <select id="goal-select" name="goal">
                             <option value="strength">Build Strength</option>
+                            <option value="cardio">Improve Cardio</option>
                             <option value="endurance">Improve Endurance</option>
-                            <option value="weight-loss">Weight Loss</option>
                         </select>
-                        <span class="field-helper">Coming soon. Will personalize workout recommendations.</span>
+                        <span class="field-helper">Used as the default goal for generated workout recommendations.</span>
 
                         <label for="level-select">Experience Level</label>
-                        <select id="level-select" name="level" disabled>
+                        <select id="level-select" name="level">
                             <option value="beginner">Beginner</option>
                             <option value="intermediate">Intermediate</option>
                             <option value="advanced">Advanced</option>
                         </select>
-                        <span class="field-helper">Coming soon. Will adjust workout difficulty.</span>
+                        <span class="field-helper">Used as the default difficulty for the recommendation builder.</span>
                     </div>
 
                     <button type="submit" class="btn">Save Settings</button>
@@ -87,24 +87,46 @@
                 <div class="settings-info-panel">
                     <h3>About Your Settings</h3>
 
-                    <div class="info-tile">
-                        <h4>Single-User Demo</h4>
-                        <p>SweatLogic runs in single-user demonstration mode. Your settings are saved to browser local storage and do not require an account.</p>
-                    </div>
+                    <div class="settings-info-rows">
+                        <div class="settings-info-row">
+                            <span class="sir-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                            </span>
+                            <div class="sir-body">
+                                <span class="sir-label">Single-User Demo</span>
+                                <span class="sir-desc">No account needed — settings save to your browser's local storage.</span>
+                            </div>
+                        </div>
 
-                    <div class="info-tile">
-                        <h4>What Gets Saved</h4>
-                        <p>Display name and measurement units are actively used. Fitness preferences are UI placeholders for future backend support.</p>
-                    </div>
+                        <div class="settings-info-row">
+                            <span class="sir-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            </span>
+                            <div class="sir-body">
+                                <span class="sir-label">What Gets Saved</span>
+                                <span class="sir-desc">Display name, units, goal, and experience level — used across the app.</span>
+                            </div>
+                        </div>
 
-                    <div class="info-tile">
-                        <h4>Data Privacy</h4>
-                        <p>All data stays in your browser. Nothing is sent to external services. Clearing browser data will reset your settings.</p>
-                    </div>
+                        <div class="settings-info-row">
+                            <span class="sir-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </span>
+                            <div class="sir-body">
+                                <span class="sir-label">Data Privacy</span>
+                                <span class="sir-desc">All data stays in your browser. Nothing sent to external services.</span>
+                            </div>
+                        </div>
 
-                    <div class="info-tile" style="background: var(--green-soft); border-color: rgba(11,143,42,0.12);">
-                        <h4>Need Help?</h4>
-                        <p>Check the dashboard for your workout summary, or head to the workout page to log a new session.</p>
+                        <div class="settings-info-row settings-info-row--accent">
+                            <span class="sir-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            </span>
+                            <div class="sir-body">
+                                <span class="sir-label">Need Help?</span>
+                                <span class="sir-desc">Check your <a href="dashboard.html">Dashboard</a> or log a session on the <a href="workout.html">Workout</a> page.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,6 +150,7 @@
         </footer>
     </div>
 
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/settings.js"></script>
 </body>

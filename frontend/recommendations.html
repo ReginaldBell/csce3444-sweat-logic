@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations - SweatLogic</title>
+    <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .exercise-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .exercise-card h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+        }
+        .exercise-meta {
+            margin: 0;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--green-deep);
+        }
+        .exercise-instructions {
+            margin: 0;
+            font-size: 0.92rem;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+        .rec-status {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .rec-status strong {
+            display: block;
+            font-size: 1.1rem;
+            color: #1b1b1b;
+            margin-bottom: 0.4rem;
+        }
+        .rec-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .rec-filters label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+        .rec-filters select {
+            font-size: 0.88rem;
+            padding: 0.3rem 0.6rem;
+            border: 1.5px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--green-deep);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="page-home">
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="header-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="index.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a class="is-active" href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </nav>
+                <a class="header-cta" href="workout.html">Log Workout</a>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="page-intro">
+                <div class="eyebrow">Recommendations</div>
+                <h2 class="page-title" id="rec-title">
+                    <span class="gradient-text" id="rec-part-label">Loading...</span> Workout Plan
+                </h2>
+                <p class="page-lead">A curated set of exercises for your selected muscle group, tailored to intermediate level and strength goals.</p>
+            </section>
+
+            <a href="workout.html" class="back-link">&#8592; Back to Workout</a>
+
+            <div class="rec-filters">
+                <label for="rec-goal">Goal
+                    <select id="rec-goal">
+                        <option value="strength">Strength</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="endurance">Endurance</option>
+                    </select>
+                </label>
+                <label for="rec-level">Level
+                    <select id="rec-level">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="dash-panel" id="rec-container">
+                <div class="rec-status" id="rec-status">
+                    <strong>Loading exercises&hellip;</strong>
+                    Fetching your workout plan from the server.
+                </div>
+                <div class="rec-grid" id="rec-grid" hidden></div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <a class="brand" href="index.html" aria-label="SweatLogic home">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text"><span>Sweat</span><span>Logic</span></span>
+                </a>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="workout.html">Workout</a>
+                    <a href="progress.html">Progress</a>
+                    <a href="map.html">Map</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+                <p class="footer-copy">Live workout summaries grounded in existing API data.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const PART_LABELS = {
+            chest: 'Chest',
+            back: 'Back',
+            legs: 'Legs',
+            arms: 'Arms',
+            core: 'Core'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(location.search);
+            const part = params.get('part') || 'chest';
+            const label = PART_LABELS[part] || part.charAt(0).toUpperCase() + part.slice(1);
+
+            document.title = label + ' Recommendations - SweatLogic';
+            document.getElementById('rec-part-label').textContent = label;
+
+            const goalSelect  = document.getElementById('rec-goal');
+            const levelSelect = document.getElementById('rec-level');
+
+            // Pre-fill from localStorage if settings were saved
+            const savedGoal  = localStorage.getItem('goal');
+            const savedLevel = localStorage.getItem('level');
+            if (savedGoal  && goalSelect.querySelector(`option[value="${savedGoal}"]`))  goalSelect.value  = savedGoal;
+            if (savedLevel && levelSelect.querySelector(`option[value="${savedLevel}"]`)) levelSelect.value = savedLevel;
+
+            function loadPlan() {
+                const goal  = goalSelect.value;
+                const level = levelSelect.value;
+                document.getElementById('rec-status').innerHTML = '<strong>Loading exercises&hellip;</strong>Fetching your workout plan from the server.';
+                document.getElementById('rec-status').hidden = false;
+                document.getElementById('rec-grid').hidden = true;
+                fetch(`/api/recommendations/generate/${part}?goal=${goal}&level=${level}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Server returned ' + res.status);
+                        return res.json();
+                    })
+                    .then(plan => renderPlan(plan))
+                    .catch(err => showError(err));
+            }
+
+            goalSelect.addEventListener('change', loadPlan);
+            levelSelect.addEventListener('change', loadPlan);
+
+            loadPlan();
+        });
+
+        function renderPlan(plan) {
+            const status = document.getElementById('rec-status');
+            const grid = document.getElementById('rec-grid');
+
+            if (!plan.exercises || plan.exercises.length === 0) {
+                status.innerHTML = '<strong>No exercises found</strong>Try a different body part.';
+                return;
+            }
+
+            status.hidden = true;
+            grid.hidden = false;
+
+            grid.innerHTML = plan.exercises.map(ex => `
+                <div class="dash-panel exercise-card">
+                    <h4>${ex.name}</h4>
+                    <p class="exercise-meta">${ex.sets} sets &times; ${ex.reps}</p>
+                    <p class="exercise-instructions">${ex.instructions}</p>
+                </div>
+            `).join('');
+        }
+
+        function showError(err) {
+            const status = document.getElementById('rec-status');
+            status.innerHTML = `
+                <strong>Could not load exercises</strong>
+                Make sure the backend server is running. (${err.message})
+            `;
+        }
+    </script>
+</body>
+</html>

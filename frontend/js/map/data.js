@@ -52,15 +52,15 @@ export const ZONES = {
   },
 
   'courts-c': {
-    label: 'Courts C',
+    label: 'Basketball Main Floor',
     floor: 1,
     group: 'courts',
     meta: {
-      capacity: 30,
-      equipment: ['Table Tennis Tables', 'Badminton Net', 'Hardwood Floor'],
+      capacity: 60,
+      equipment: ['Basketball Hoops', 'Full-Length Court', 'Hardwood Floor'],
       hours: '6AM – 11PM',
     },
-    ui: { gridArea: 'courtsC', icon: 'fa-table-tennis-paddle-ball', youAreHere: false },
+    ui: { gridArea: 'courtsC', icon: 'fa-basketball', youAreHere: false },
     status: null,
   },
 
@@ -260,7 +260,7 @@ export const FLOORS = {
       "courtsB lockers    fitnessOfc opc"
       "courtsC lockers    entrance  smoothie"
     `,
-    gridTemplateColumns: '1.2fr 1fr 1fr 1fr',
+    gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
     gridTemplateRows: '1fr 1fr 1fr 1fr 1fr',
   },
   2: {
@@ -269,7 +269,7 @@ export const FLOORS = {
       "track    track"
       "weights2 cardio2"
     `,
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
     gridTemplateRows: '1.2fr 1fr',
   },
 };

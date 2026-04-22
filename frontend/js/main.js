@@ -1,9 +1,7 @@
-const API_BASE = 'http://localhost:8080/api';
-
 const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 const motionGroups = [
     {
-        selector: '.hero, .page-intro, .cta-band',
+        selector: '.hero, .page-intro, .cta-band, .workout-path-chooser, .builder-steps, .manual-log-card',
         animation: 'hero',
         step: 140,
     },
@@ -23,12 +21,12 @@ const motionGroups = [
         step: 100,
     },
     {
-        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .preview-card, .split-copy, form, .card',
+        selector: '.feature-card, .stat-card, .dash-panel, .chart-panel, .breakdown-panel, .map-main, .map-info-card, .workout-output-panel, .preview-card, .split-copy, form, .card, .guided-builder .builder-card',
         animation: 'pop',
         step: 90,
     },
     {
-        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip',
+        selector: '.metric-tile, .detail-chip, .mini-metric, .recommendation-card, .tip-card, .info-tile, .activity-item, .quick-action-btn, .breakdown-item, .history-list li, .legend-list li, .legend-list-grid li, .hours-list li, .map-tip, .workout-empty-state, .plan-summary-chip, .exercise-plan-item, .generated-plan-actions, .path-card, .body-zone-card, .goal-option-btn, .level-option-btn, .duration-preset-btn, .manual-type-option',
         animation: 'slide-right',
         step: 80,
     },
@@ -45,8 +43,64 @@ async function apiFetch(path, options = {}) {
         headers: { 'Content-Type': 'application/json' },
         ...options,
     });
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    return res.json();
+    if (res.status === 204) {
+        return null;
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+    let payload;
+
+    if (contentType.includes('application/json')) {
+        payload = await res.json();
+    } else {
+        payload = await res.text();
+    }
+
+    if (!res.ok) {
+        const message = typeof payload === 'string' && payload.trim()
+            ? payload.trim()
+            : `Request failed: ${res.status}`;
+        const error = new Error(message);
+        error.status = res.status;
+        error.payload = payload;
+        throw error;
+    }
+
+    return payload;
+}
+
+const DEFAULT_BACKEND_DOWN_MESSAGE = 'Could not reach the server. Check that the backend is running and try again.';
+
+function setAlertState(element, message, tone = 'error') {
+    if (!element) {
+        return;
+    }
+
+    element.textContent = message || '';
+    element.hidden = !message;
+    element.classList.remove('is-visible', 'is-error', 'is-success');
+
+    if (!message) {
+        return;
+    }
+
+    element.classList.add('is-visible', tone === 'error' ? 'is-error' : 'is-success');
+}
+
+function isBackendUnavailable(error) {
+    return !Number.isFinite(error?.status);
+}
+
+function getRequestErrorMessage(error, fallback = DEFAULT_BACKEND_DOWN_MESSAGE) {
+    if (isBackendUnavailable(error)) {
+        return fallback;
+    }
+
+    if (typeof error?.message === 'string' && error.message.trim()) {
+        return error.message.trim();
+    }
+
+    return fallback;
 }
 
 function findMatches(root, selector) {
@@ -99,7 +153,7 @@ function prepareAnimatedElements(root = document) {
 
             element.dataset.motionReady = 'true';
             element.setAttribute('data-animate', group.animation);
-            const scope = element.closest('.hero, .feature-grid, .split-panel, .stat-row, .dash-grid, .progress-grid, .settings-layout, .map-below, .quick-actions, .mini-metric-grid, .detail-grid') || element.parentElement || root;
+            const scope = element.closest('.hero, .feature-grid, .split-panel, .stat-row, .dash-grid, .progress-grid, .settings-layout, .map-below, .quick-actions, .mini-metric-grid, .detail-grid, .workout-path-chooser, .guided-builder, .goal-option-grid, .level-option-grid, .body-zone-cards, .manual-type-grid, .duration-preset-grid, .exercise-plan-list, .plan-summary-grid') || element.parentElement || root;
             const scopedItems = Array.from(scope.querySelectorAll(group.selector));
             const scopedIndex = scopedItems.indexOf(element) >= 0 ? scopedItems.indexOf(element) : index;
             const step = group.step || 85;
@@ -275,6 +329,90 @@ function refreshProgressTargets(root = document) {
     });
 }
 
+function normalizeWorkoutDate(value) {
+    const parsed = new Date(value);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return null;
+    }
+
+    const year = parsed.getFullYear();
+    const month = parsed.getMonth();
+    const day = parsed.getDate();
+
+    return {
+        key: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        serial: Math.floor(Date.UTC(year, month, day) / 86400000),
+    };
+}
+
+function getWorkoutDaySerials(workouts = []) {
+    const uniqueSerials = new Set();
+
+    workouts.forEach((workout) => {
+        const normalized = normalizeWorkoutDate(workout.date);
+        if (normalized) {
+            uniqueSerials.add(normalized.serial);
+        }
+    });
+
+    return Array.from(uniqueSerials).sort((a, b) => a - b);
+}
+
+function getCurrentWorkoutStreak(daySerials) {
+    if (!daySerials.length) {
+        return 0;
+    }
+
+    const today = normalizeWorkoutDate(new Date());
+    if (!today) {
+        return 0;
+    }
+
+    const serialSet = new Set(daySerials);
+    if (!serialSet.has(today.serial)) {
+        return 0;
+    }
+
+    let streak = 0;
+    let cursor = today.serial;
+
+    while (serialSet.has(cursor)) {
+        streak += 1;
+        cursor -= 1;
+    }
+
+    return streak;
+}
+
+function getLongestWorkoutStreak(daySerials) {
+    if (!daySerials.length) {
+        return 0;
+    }
+
+    let longest = 0;
+    let current = 0;
+    let previous = null;
+
+    daySerials.forEach((serial) => {
+        current = previous !== null && serial === previous + 1 ? current + 1 : 1;
+        longest = Math.max(longest, current);
+        previous = serial;
+    });
+
+    return longest;
+}
+
+function getWorkoutMetrics(workouts = []) {
+    const daySerials = getWorkoutDaySerials(workouts);
+
+    return {
+        daySerials,
+        currentStreak: getCurrentWorkoutStreak(daySerials),
+        longestStreak: getLongestWorkoutStreak(daySerials),
+    };
+}
+
 function getSelectedUnit() {
     return localStorage.getItem('unit') || 'imperial';
 }
@@ -307,6 +445,11 @@ function applyUnitSettings() {
 function loadSavedProfile() {
     const saved = localStorage.getItem('sweatlogic-profile');
     if (!saved) {
+        const goalField = document.getElementById('goal');
+        const storedGoal = localStorage.getItem('goal');
+        if (goalField && storedGoal) {
+            goalField.value = storedGoal;
+        }
         return;
     }
 
@@ -381,11 +524,11 @@ function calculateBMI() {
         else if (bmi < 29.9) category = 'Overweight';
         else category = 'Obese';
 
-        if (userGoal === 'Lose weight') {
+        if (userGoal === 'Lose weight' || userGoal === 'cardio') {
             recommendation = 'Focus on higher-volume cardio and calorie-burning sessions.';
-        } else if (userGoal === 'Gain muscle') {
+        } else if (userGoal === 'Gain muscle' || userGoal === 'strength') {
             recommendation = 'Focus on compound lifts and progressive overload for strength gains.';
-        } else if (userGoal === 'Improve endurance') {
+        } else if (userGoal === 'Improve endurance' || userGoal === 'endurance') {
             recommendation = 'Prioritize steady-state cardio and higher-rep training blocks.';
         } else if (userGoal === 'Maintain') {
             recommendation = 'Balance lighter cardio days with a few consistent strength sessions.';
@@ -449,8 +592,81 @@ document.addEventListener('DOMContentLoaded', () => {
         element.dataset.progress = clampProgress(progress).toFixed(3);
         setMeterScale(element, progress);
     };
+    window.getWorkoutMetrics = getWorkoutMetrics;
     window.clearProfile = clearProfile;
+    window.setAlertState = setAlertState;
+    window.getRequestErrorMessage = getRequestErrorMessage;
+    window.DEFAULT_BACKEND_DOWN_MESSAGE = DEFAULT_BACKEND_DOWN_MESSAGE;
     applyUnitSettings();
     loadSavedProfile();
     initializeMotion();
 });
+
+// SVG icons keyed by workout type for the calendar cells
+const CAL_TYPE_ICONS = {
+    running: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"/><path d="M7 22l3.5-7 2 3.5 3-5 3 8.5"/><path d="M10 9L7 14h5"/><path d="M14 9l1.5 3"/></svg>`,
+    cycling: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>`,
+    weights: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="4.5" y="5.5" width="2" height="13" rx="1"/><rect x="17.5" y="5.5" width="2" height="13" rx="1"/><rect x="1.5" y="8.5" width="3" height="7" rx="1"/><rect x="19.5" y="8.5" width="3" height="7" rx="1"/></svg>`,
+    other:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+};
+
+function generateCalendar(workouts = [], displayYear, displayMonth) {
+    const grid = document.getElementById('calendar-grid');
+    const monthLabel = document.getElementById('calendar-month');
+    const monthlyCountEl = document.getElementById('cal-monthly-count');
+    if (!grid || !monthLabel) return;
+
+    const now = new Date();
+    const year  = displayYear  ?? now.getFullYear();
+    const month = displayMonth ?? now.getMonth();
+
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    monthLabel.textContent = monthNames[month] + " " + year;
+
+    const firstDay    = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Build day → workout-type map for this month (first workout on that day wins)
+    const dayTypeMap = {};
+    workouts.forEach(w => {
+        const d = new Date(w.date);
+        if (d.getFullYear() === year && d.getMonth() === month) {
+            const day = d.getDate();
+            if (!dayTypeMap[day]) dayTypeMap[day] = (w.type || 'other').toLowerCase();
+        }
+    });
+
+    if (monthlyCountEl) {
+        monthlyCountEl.textContent = Object.keys(dayTypeMap).length;
+    }
+
+    grid.innerHTML = '';
+
+    // Blank offset cells
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div class="cal-cell"></div>`;
+    }
+
+    const todayDay = (now.getFullYear() === year && now.getMonth() === month) ? now.getDate() : -1;
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday     = day === todayDay;
+        const workoutType = dayTypeMap[day];
+        const hasWorkout  = !!workoutType;
+        const icon        = CAL_TYPE_ICONS[workoutType] || CAL_TYPE_ICONS.other;
+
+        let cls = 'cal-cell';
+        if (hasWorkout) cls += ' cal-cell--workout';
+        if (isToday)    cls += ' cal-cell--today';
+
+        if (hasWorkout) {
+            grid.innerHTML += `
+                <div class="${cls}" title="${workoutType}">
+                    <div class="cal-cell__icon-wrap">${icon}</div>
+                    <span class="cal-cell__day">${day}</span>
+                </div>`;
+        } else {
+            grid.innerHTML += `<div class="${cls}"><span class="cal-cell__num">${day}</span></div>`;
+        }
+    }
+}

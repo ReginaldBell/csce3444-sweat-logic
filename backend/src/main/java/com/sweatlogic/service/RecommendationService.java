@@ -79,15 +79,9 @@ public class RecommendationService {
             exerciseService.getByBodyPart(bodyPart.getValue())
         );
 
-        // Step 2 — Apply goal-based prioritisation
-        pool = applyGoalFilter(pool, goal);
-
-        // Step 3 — Shuffle for variety, using a seeded Random if provided
-        if (seed != null) {
-            Collections.shuffle(pool, new Random(seed));
-        } else {
-            Collections.shuffle(pool);
-        }
+        // Step 2 — Apply goal-based prioritisation while keeping preferred
+        // exercises ahead of the fallback bucket.
+        pool = applyGoalFilter(pool, goal, seed);
 
         // Step 4 — Select the right number of exercises for this level
         List<Exercise> selected = pool.stream()
@@ -108,7 +102,7 @@ public class RecommendationService {
      * CARDIO / ENDURANCE → prefer cardio-category exercises
      * STRENGTH           → prefer strength-category exercises (most exercises)
      */
-    private List<Exercise> applyGoalFilter(List<Exercise> pool, Goal goal) {
+    private List<Exercise> applyGoalFilter(List<Exercise> pool, Goal goal, Long seed) {
         String preferredCategory = (goal == Goal.CARDIO || goal == Goal.ENDURANCE)
                 ? "cardio"
                 : "strength";
@@ -120,7 +114,9 @@ public class RecommendationService {
         // If no exercises match the preferred category, use the full pool
         // so we never return an empty plan
         if (preferred.isEmpty()) {
-            return pool;
+            List<Exercise> shuffledPool = new ArrayList<>(pool);
+            shuffle(shuffledPool, seed);
+            return shuffledPool;
         }
 
         // Preferred exercises lead — the shuffle step will randomise within
@@ -129,9 +125,20 @@ public class RecommendationService {
                 .filter(e -> !e.getCategory().equalsIgnoreCase(preferredCategory))
                 .collect(Collectors.toList());
 
+        shuffle(preferred, seed);
+        shuffle(rest, seed == null ? null : seed + 1);
+
         List<Exercise> ordered = new ArrayList<>(preferred);
         ordered.addAll(rest);
         return ordered;
+    }
+
+    private void shuffle(List<Exercise> exercises, Long seed) {
+        if (seed != null) {
+            Collections.shuffle(exercises, new Random(seed));
+        } else {
+            Collections.shuffle(exercises);
+        }
     }
 
     /**

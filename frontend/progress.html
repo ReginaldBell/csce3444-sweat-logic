@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="page-progress">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -33,49 +33,81 @@
                 <h2 class="page-title">Analyze Your <span class="gradient-text">Performance</span></h2>
                 <p class="page-lead">Visualize your workout trends, track total activity, and understand your training patterns over time. All data comes from your logged workouts.</p>
             </section>
+            <p id="progress-backend-status" class="page-alert" role="alert" aria-live="polite" hidden></p>
 
-            <!-- Top Summary Stats -->
-            <div class="progress-stat-row">
-                <div class="stat-card">
-                    <div class="stat-icon">T</div>
-                    <span class="stat-value" id="progress-total-workouts">--</span>
-                    <span class="stat-label">Total Workouts</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
+            <!-- Period filter -->
+            <div class="period-filter" id="period-filter" role="group" aria-label="Time period">
+                <button class="period-btn" data-period="7">Last 7 days</button>
+                <button class="period-btn" data-period="30">Last 30 days</button>
+                <button class="period-btn is-active" data-period="0">All time</button>
+            </div>
+
+            <!-- Insight card -->
+            <div class="insight-card" id="insight-card" hidden>
+                <div class="insight-icon">&#10022;</div>
+                <p id="insight-text"></p>
+            </div>
+
+            <!-- Top metrics: streak + workouts -->
+            <div class="pg-stat-grid pg-stat-grid--2">
+                <div class="pg-card" id="progress-current-streak-card">
+                    <p class="pg-label">Current streak</p>
+                    <p class="pg-big-num">
+                        <span id="progress-current-streak">0</span>
+                        <span class="pg-num-unit">days</span>
+                    </p>
+                    <div class="pg-streak-bar">
+                        <div class="pg-streak-fill" id="pg-streak-fill"></div>
+                    </div>
+                    <p class="pg-sub-muted">Longest: <span id="progress-longest-streak">0</span> days</p>
                 </div>
-                <div class="stat-card accent-blue">
-                    <div class="stat-icon">H</div>
-                    <span class="stat-value" id="progress-total-hours">--</span>
-                    <span class="stat-label">Total Hours</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">A</div>
-                    <span class="stat-value" id="progress-avg-session">--</span>
-                    <span class="stat-label">Avg Session (min)</span>
-                    <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
+                <div class="pg-card" id="progress-total-workouts-card">
+                    <p class="pg-label">Total workouts</p>
+                    <p class="pg-big-num" id="progress-total-workouts">--</p>
+                    <p class="pg-sub-muted" id="pg-hours-sub">-- hrs total</p>
                 </div>
             </div>
 
-            <!-- Charts Grid -->
-            <section id="progress-charts" class="progress-grid">
-                <div class="chart-panel">
-                    <h3>Workouts Over Time</h3>
-                    <p class="chart-subtitle">Number of sessions per period</p>
-                    <div class="chart-frame">
-                        <canvas id="workouts-chart"></canvas>
+            <!-- Weekly trend -->
+            <div class="pg-card" id="progress-charts">
+                <p class="pg-section-label">Weekly trend</p>
+                <div class="pg-chart-row">
+                    <div class="pg-chart-col">
+                        <p class="pg-chart-sub">Sessions</p>
+                        <div class="chart-frame"><canvas id="workouts-chart"></canvas></div>
+                    </div>
+                    <div class="pg-divider-v"></div>
+                    <div class="pg-chart-col">
+                        <p class="pg-chart-sub">Duration (min)</p>
+                        <div class="chart-frame"><canvas id="duration-chart"></canvas></div>
                     </div>
                 </div>
-                <div class="chart-panel">
-                    <h3>Duration Over Time</h3>
-                    <p class="chart-subtitle">Total minutes per period</p>
-                    <div class="chart-frame">
-                        <canvas id="duration-chart"></canvas>
-                    </div>
-                </div>
-            </section>
+            </div>
 
-            <!-- Workout Breakdown -->
-            <div class="progress-grid" style="margin-top: 1.5rem;">
+            <!-- Activity Heatmap -->
+            <div class="pg-card" id="heatmap-panel">
+                <div class="pg-heatmap-header">
+                    <p class="pg-section-label" style="margin:0;">Activity Heatmap</p>
+                </div>
+                <p class="pg-chart-sub">Workout frequency by day &mdash; click future cells to plan</p>
+                <div class="heatmap-grid" id="heatmap-grid" aria-label="Workout activity heatmap"></div>
+                <div class="heatmap-legend" aria-hidden="true">
+                    <span>Less</span>
+                    <span class="heatmap-cell" data-level="0"></span>
+                    <span class="heatmap-cell" data-level="1"></span>
+                    <span class="heatmap-cell" data-level="2"></span>
+                    <span class="heatmap-cell" data-level="3"></span>
+                    <span class="heatmap-cell" data-level="4"></span>
+                    <span>More</span>
+                    <span style="margin-left: 0.75rem; display: flex; align-items: center; gap: 5px;">
+                        <span class="heatmap-cell" data-planned="true" style="flex-shrink:0;width:12px;height:12px;aspect-ratio:unset;pointer-events:none;"></span>
+                        <span>Planned</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Workout Breakdown + History -->
+            <div class="progress-grid">
                 <div class="breakdown-panel">
                     <h3>Workout Type Breakdown</h3>
                     <div id="type-breakdown">
@@ -133,6 +165,21 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Bottom metrics: avg session + total hours -->
+            <div class="pg-stat-grid pg-stat-grid--2">
+                <div class="pg-metric-card" id="progress-avg-session-card">
+                    <p class="pg-label">Avg session</p>
+                    <p class="pg-big-num pg-big-num--sm">
+                        <span id="progress-avg-session">--</span>
+                        <span class="pg-num-unit">min</span>
+                    </p>
+                </div>
+                <div class="pg-metric-card" id="progress-total-hours-card">
+                    <p class="pg-label">Total hours</p>
+                    <p class="pg-big-num pg-big-num--sm" id="progress-total-hours">--</p>
+                </div>
+            </div>
         </main>
 
         <footer class="site-footer">
@@ -148,11 +195,13 @@
                     <a href="map.html">Map</a>
                     <a href="settings.html">Settings</a>
                 </div>
-                <p class="footer-copy">Progress remains based on workout history rather than new unsupported endpoints.</p>
+                <p class="footer-copy">Visualize your journey — every workout counted, every trend surfaced.</p>
             </div>
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/progress.js"></script>
 </body>

@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://logos-world.net/wp-content/uploads/2025/01/UNT-Symbol.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="site-shell">
         <header class="site-header">
             <div class="header-inner">
@@ -33,31 +33,40 @@
                 <h2 class="page-title">Your Fitness <span class="gradient-text">Command Center</span></h2>
                 <p class="page-lead">Track your recent activity, weekly totals, and workout trends all in one place. Everything here stays grounded in your real workout history.</p>
             </section>
+            <p id="dashboard-backend-status" class="page-alert" role="alert" aria-live="polite" hidden></p>
 
             <!-- Stat Cards Row -->
             <div class="stat-row">
-                <div class="stat-card">
-                    <div class="stat-icon">W</div>
+                <div class="stat-card" id="total-workouts-card">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><rect x="4.5" y="5.5" width="2" height="13" rx="1"/><rect x="17.5" y="5.5" width="2" height="13" rx="1"/><rect x="1.5" y="8.5" width="3" height="7" rx="1"/><rect x="19.5" y="8.5" width="3" height="7" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    </div>
                     <span class="stat-value" id="total-workouts">0</span>
                     <span class="stat-label">Workouts This Week</span>
                     <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
                 </div>
-                <div class="stat-card accent-blue">
-                    <div class="stat-icon">T</div>
+                <div class="stat-card accent-blue" id="total-duration-card">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
                     <span class="stat-value" id="total-duration">0</span>
                     <span class="stat-label">Minutes Logged</span>
                     <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">A</div>
+                <div class="stat-card" id="avg-duration-card">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
                     <span class="stat-value" id="avg-duration">--</span>
                     <span class="stat-label">Avg Duration (min)</span>
                     <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
                 </div>
-                <div class="stat-card accent-blue">
-                    <div class="stat-icon">S</div>
+                <div class="stat-card accent-flame" id="streak-card">
+                    <div class="stat-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                    </div>
                     <span class="stat-value" id="streak-count">--</span>
-                    <span class="stat-label">Current Streak</span>
+                    <span class="stat-label" id="streak-label">Current Streak</span>
                     <div class="stat-meter" aria-hidden="true"><span class="stat-meter-fill"></span></div>
                 </div>
             </div>
@@ -81,6 +90,14 @@
                             <div class="info-tile">
                                 <h4>Total Time</h4>
                                 <p><strong id="weekly-time-total">0</strong> minutes active</p>
+                            </div>
+                            <div class="info-tile">
+                                <h4>Avg Duration</h4>
+                                <p><strong id="weekly-avg-duration">--</strong> min per session</p>
+                            </div>
+                            <div class="info-tile">
+                                <h4>Best Session</h4>
+                                <p><strong id="weekly-best-session">--</strong> min longest</p>
                             </div>
                         </div>
                     </div>
@@ -108,6 +125,40 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Workout Calendar -->
+            <div class="cal-widget" id="calendar-section" style="margin-top: 1.5rem;">
+                <div class="cal-widget__header">
+                    <div class="cal-widget__title-group">
+                        <span class="cal-widget__label">Workout Calendar</span>
+                        <span class="cal-widget__month" id="calendar-month"></span>
+                    </div>
+                    <div class="cal-widget__nav">
+                        <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
+                        <button class="cal-nav-btn" id="cal-next" aria-label="Next month">&#8250;</button>
+                    </div>
+                </div>
+                <div class="cal-widget__legend">
+                    <span class="cal-legend-item">
+                        <span class="cal-legend-dot cal-legend-dot--workout"></span>
+                        Workout Day
+                    </span>
+                    <span class="cal-legend-item">
+                        <span class="cal-legend-dot cal-legend-dot--today"></span>
+                        Today
+                    </span>
+                </div>
+                <div class="cal-weekdays">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendar-grid" class="cal-grid"></div>
+                <div class="cal-widget__footer">
+                    <span class="cal-stat">
+                        <span class="cal-stat__value" id="cal-monthly-count">0</span>
+                        <span class="cal-stat__label">Workouts This Month</span>
+                    </span>
+                </div>
+            </div>
         </main>
 
         <footer class="site-footer">
@@ -123,11 +174,13 @@
                     <a href="map.html">Map</a>
                     <a href="settings.html">Settings</a>
                 </div>
-                <p class="footer-copy">Live workout summaries grounded in existing API data.</p>
+                <p class="footer-copy">Track every rep, every mile, every minute.</p>
             </div>
         </footer>
     </div>
 
+
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
