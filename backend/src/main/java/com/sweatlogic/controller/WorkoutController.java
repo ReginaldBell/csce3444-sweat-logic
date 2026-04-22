@@ -69,4 +69,21 @@ public class WorkoutController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // Export all workouts as a downloadable JSON file
+    @GetMapping("/export")
+    public ResponseEntity<List<Workout>> exportWorkouts() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=workouts.json");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(workoutService.getAllWorkouts());
+    }
+
+    // Import workouts from a JSON file — replaces all existing workouts
+    @PostMapping("/import")
+    public ResponseEntity<Void> importWorkouts(@RequestBody List<Workout> workouts) {
+        workoutService.importWorkouts(workouts);
+        return ResponseEntity.ok().build();
+    }
 }

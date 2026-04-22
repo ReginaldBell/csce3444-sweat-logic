@@ -70,4 +70,14 @@ public class WorkoutService {
         }
         workoutRepository.deleteById(id);
     }
+
+    // Import workouts from JSON — replaces all existing workouts
+    public void importWorkouts(List<Workout> workouts) {
+        workoutRepository.deleteAll();
+        for (Workout workout : workouts) {
+            // Set ID to null to avoid conflicts when saving
+            workout.setId(null);
+            saveWorkout(workout);
+        }
+    }
 }
