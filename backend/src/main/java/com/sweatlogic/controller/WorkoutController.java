@@ -2,6 +2,7 @@ package com.sweatlogic.controller;
 
 import com.sweatlogic.model.Workout;
 import com.sweatlogic.service.WorkoutService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,5 +69,21 @@ public class WorkoutController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+        //export workouts as JSON file -Cash
+        @GetMapping("/export")
+    public ResponseEntity<List<Workout>> exportWorkouts() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=workouts.json");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(workoutService.getAllWorkouts());
+    }
+
+    // Import workouts from a JSON file — replaces all existing workouts
+    @PostMapping("/import")
+    public ResponseEntity<Void> importWorkouts(@RequestBody List<Workout> workouts) {
+        workoutService.importWorkouts(workouts);
+        return ResponseEntity.ok().build();
     }
 }
