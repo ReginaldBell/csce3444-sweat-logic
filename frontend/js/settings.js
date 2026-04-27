@@ -242,4 +242,78 @@ document.addEventListener('DOMContentLoaded', () => {
             window.refreshMotion();
         }
     });
+
+        // Export button handler
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/workouts/export`;
+            link.download = 'workouts.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+
+    // Import button handler
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+    if (importBtn) {
+        importBtn.addEventListener('click', () => {
+            const file = importFile.files[0];
+            if (!file) {
+                alert('Please select a file to import.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const workouts = JSON.parse(e.target.result);
+                    fetch(`${API_BASE}/workouts/import`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(workouts)
+                    }).then(response => {
+                        if (response.ok) {
+                            alert('Workouts imported successfully!');
+                        } else {
+                            response.text().then(text => {
+                                alert(`Import failed: ${text || response.statusText}`);
+                            });
+                        }
+                    }).catch(err => {
+                        alert(`An error occurred during import: ${err.message}`);
+                    });
+                } catch (err) {
+                    alert('Invalid JSON file. Please select a valid workouts JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // Reset button handler
+    const resetBtn = document.getElementById('reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all workouts? This action cannot be undone.')) {
+                fetch(`${API_BASE}/workouts/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify([])
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Workouts reset successfully!');
+                    } else {
+                        response.text().then(text => {
+                            alert(`Reset failed: ${text || response.statusText}`);
+                        });
+                    }
+                }).catch(err => {
+                    alert(`An error occurred during reset: ${err.message}`);
+                });
+            }
+        });
+    }
 });
